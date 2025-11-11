@@ -1,10 +1,9 @@
 #include "core.h"
 
-#include "qforeach.h"
 #include "requestmanager.h"
 #include "responsemanager.h"
 #include "streammanager.h"
-#include "wcydeviceservice.h";
+#include "wcydeviceservice.h"
 #include "device_generator.h"
 
 #include <QObject>
@@ -159,81 +158,6 @@ void Core::onSystemInit()
     this->send(res);
 
     _devService->startScan();
-
-//  TestSensorRPC();
-}
-
-void Core::TestSensorRPC()
-{
-    qInfo() << "Testing RPC call to WCY Sensor API:";
-
-    if (_wcyAPI) return;
-
-    _wcyAPI = std::make_unique<WCYServiceWrapper>(this);
-
-    // Подключаем сигналы для обработки событий
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::messageReceived, [](const QString &msg) {
-        qInfo().noquote() << "[INFO]" << msg;
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::errorOccurred, [](const QString &error) {
-        qCritical().noquote() << "[ERROR]" << error;
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::connectedChanged, [this](bool connected) {
-        if (connected) {
-            //  client->scanBLE(5000); // 5 секунд сканирования
-            _wcyAPI->scanUSB();
-        } else {
-            qCritical().noquote() << "[ERROR]" << "server is disconnected";
-        }
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::devScanFinished, [this](const QList<DeviceModel> &devices, const QString &error) {
-        qInfo().noquote() << "Found devices: " << devices.count();
-        for(auto dev: devices) {
-            qInfo().noquote() << "[INFO]" << dev.deviceName() << "MAC: " << dev.deviceMac();
-        }
-
-        if (!_connectedDevice.deviceName().isEmpty() || devices.count() == 0) {
-            return;
-        }
-
-
-        _connectedDevice = devices.first();
-
-        _wcyAPI->connectDevice(_connectedDevice.deviceMac());
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::deviceConnected, [this](ConnectEnumGadget::ConnectEnum result, const QString &error) {
-        if (result == ConnectEnumGadget::ConnectEnum::SUCCESSFUL)  {
-            _wcyAPI->getSensorRange(_connectedDevice.deviceMac());
-        }
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorRangeReceived, [this](QList<DataTypeModel> ranges, const QString &error) {
-        QList<int32> ranges_idList;
-        for (const auto r: ranges) {
-            ranges_idList.append(r.rangeId());
-        }
-
-        _wcyAPI->startSendData(_connectedDevice.deviceMac(), ranges_idList);
-        _wcyAPI->subscribeToSensorData(_connectedDevice.deviceMac());
-        _wcyAPI->subscribeToSensorEvents(_connectedDevice.deviceMac());
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorDataReceived, [](const QList<SensorDataModel> &sensorData) {
-
-        if (sensorData.empty()) return;
-        qInfo() << "[STREAM]: " << "range id" << sensorData.first().rangeId() << ", value" << sensorData.first().dataValue();
-    });
-
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorEventReceived, [](const QString &deviceMac, const QString &eventType, const QString &message) {
-        qInfo() << "[INFO]: " << "device " << deviceMac << "event" << eventType << "message" << message;
-    });
-
-    // Вызов методов
-    _wcyAPI->connectToServer("http://localhost:5001");
 }
 
 long Core::executeScript(const QString& script)
@@ -362,15 +286,15 @@ QJsonObject Core::convertInfoToDTO(DeviceInfo dev) {
     QJsonArray units;
     QJsonArray channels;
 
-    for (int ii = 0; ii < 3; ii++) {
+    for (int ii = 0; ii < DeviceInfo::MAX_CHANNELS; ii++) {
         auto ch = dev.channels[ii];
         if (ch.id == 0) break;
 
-        for (int jj = 0; jj < 10; jj++) {
+        for (int jj = 0; jj < ChannelInfo::MAX_UNITS; jj++) {
             int unitId = ch.availableUnits[jj];
-            if (unitId > 0) {
-                units << ch.availableUnits[jj];
-            }
+            if (unitId == 0) break;
+
+            units << ch.availableUnits[jj];
         }
 
         channels.append(DeviceGenerator::createChannel(ch.id, ch.symbol.c_str(), ch.name.c_str(), ch.baseUnit, units));

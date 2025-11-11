@@ -63,11 +63,13 @@ enum CONNECT_STATE{
 };
 
 struct ChannelInfo {
+    static const int MAX_UNITS = 3;
+
     int id = 0;
     string symbol = "";
     string name = "";
     int baseUnit = 0;
-    int availableUnits[10];
+    int availableUnits[MAX_UNITS];
 
     ChannelInfo() {
         std::fill(std::begin(availableUnits), std::end(availableUnits), 0);
@@ -75,7 +77,7 @@ struct ChannelInfo {
 };
 
 typedef struct DeviceInfo {
-    static const int MAX_CHANNELS = 3;
+    static const int MAX_CHANNELS = 10;
 
     int id = 0; // internal unique number
     string deviceId = ""; // external id
