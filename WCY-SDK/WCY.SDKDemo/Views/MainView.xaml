@@ -1,0 +1,103 @@
+﻿<Window
+    x:Class="WCY.SDKDemo.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="clr-namespace:WCY.SDKDemo.Extensions"
+    xmlns:local="clr-namespace:WCY.SDKDemo"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    Title="WCY.SDKDemo"
+    Width="1280"
+    Height="768"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    AllowsTransparency="True"
+    FontFamily="微软雅黑"
+    MouseLeftButtonDown="Window_MouseLeftButtonDown"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style x:Key="WinBtnStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource Iconfont}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding Content}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Gray" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="10">
+                <TextBlock FontSize="30" Text="DisLab Demo" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                Margin="0,5,5,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    x:Name="btnMin"
+                    Width="30"
+                    Height="30"
+                    Click="btnMin_Click"
+                    Content="&#xe629;"
+                    Style="{StaticResource WinBtnStyle}"
+                    ToolTip="Minimization" />
+                <Button
+                    x:Name="btnMax"
+                    Width="30"
+                    Height="30"
+                    Click="btnMax_Click"
+                    Content="&#xe62b;"
+                    Style="{StaticResource WinBtnStyle}"
+                    ToolTip="Maximization" />
+                <Button
+                    x:Name="btnClose"
+                    Width="30"
+                    Height="30"
+                    Click="btnClose_Click"
+                    Content="&#xe6de;"
+                    Style="{StaticResource WinBtnStyle}"
+                    ToolTip="Close" />
+            </StackPanel>
+        </Grid>
+
+        <Border BorderBrush="Black" BorderThickness="0,0,0,1" />
+        <ContentControl Grid.Row="2" prism:RegionManager.RegionName="{x:Static ext:PrismManager.MainViewRegionName}" />
+    </Grid>
+</Window>
