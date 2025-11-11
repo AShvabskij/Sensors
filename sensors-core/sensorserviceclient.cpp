@@ -167,11 +167,11 @@ void WCYServiceWrapper::connectDevice(const QString &mac)
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,
-            [this, reply = std::move(reply)](const QGrpcStatus &status) mutable {
+            [this, mac, reply = std::move(reply)](const QGrpcStatus &status) mutable {
                 if (status.isOk()) {
                     ConnectResponse response;
                     if (reply->read(&response)) {
-                        emit deviceConnected(response.result(), response.error());
+                        emit deviceConnected(mac, response.result());
                     } else {
                         emit errorOccurred("Failed to deserialize Connect response");
                     }
@@ -270,11 +270,11 @@ void WCYServiceWrapper::getSensorRange(const QString &deviceMac)
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,
-            [this, reply = std::move(reply)](const QGrpcStatus &status) mutable {
+            [this, deviceMac, reply = std::move(reply)](const QGrpcStatus &status) mutable {
                 if (status.isOk()) {
                     GetSensorRangeResponse response;
                     if (reply->read(&response)) {
-                        emit sensorRangeReceived(response.ranges(), response.error());
+                        emit sensorRangeReceived(deviceMac, response.ranges());
                     } else {
                         emit errorOccurred("Failed to deserialize GetSensorRange response");
                     }

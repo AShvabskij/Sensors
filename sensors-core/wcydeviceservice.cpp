@@ -61,41 +61,47 @@ void WCYDeviceService::startScan()
 
     });
 
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::deviceConnected, [this](ConnectEnumGadget::ConnectEnum result, const QString &error) {
-        if (result == ConnectEnumGadget::ConnectEnum::SUCCESSFUL)  {
-            const DeviceInfo& connectedDevice = _devices.first();
-            _wcyAPI->getSensorRange(connectedDevice.deviceMac.c_str());
-        }
-    });
+    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::deviceConnected,
+                     [this](const QString &mac, ConnectEnumGadget::ConnectEnum result) {
+                         if (result == ConnectEnumGadget::ConnectEnum::SUCCESSFUL) {
+                             _wcyAPI->getSensorRange(mac);
+                         }
+                     });
 
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorRangeReceived, [this](QList<DataTypeModel> ranges, const QString &error) {
-        int chInd = 0;
-        DeviceInfo& connectedDevice = _devices.first();
-        for (const auto& range: ranges) {
-            ChannelInfo& ch = connectedDevice.channels[chInd++];
-            ch.id = range.rangeId();
-            ch.name = range.rangeName().toStdString();
-            ch.symbol = range.unit().toStdString();
-            ch.baseUnit = range.rangeId(); // units[range.unit()];
-            ch.availableUnits[0] = ch.baseUnit;
-        }
 
-        emit updatedeviceStatus(this, connectedDevice);
-        return;
-    });
+    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorRangeReceived,
+                     [this](const QString &mac, QList<DataTypeModel> ranges) {
+                         auto it = std::find_if(_devices.begin(), _devices.end(),
+                                                [&mac](const DeviceInfo& dev) { return dev.deviceMac == mac.toStdString(); });
+
+                         if (it != _devices.end()) {
+                             DeviceInfo& connectedDevice = *it;
+                             int chInd = 0;
+                             for (const auto& range: ranges) {
+                                 ChannelInfo& ch = connectedDevice.channels[chInd++];
+                                 ch.id = range.rangeId();
+                                 ch.name = range.rangeName().toStdString();
+                                 ch.symbol = range.unit().toStdString();
+                                 ch.baseUnit = range.rangeId();
+                                 ch.availableUnits[0] = ch.baseUnit;
+                             }
+                             emit updatedeviceStatus(this, connectedDevice);
+                         }
+                     });
 
     _wcyAPI->connectToServer("http://localhost:5001");
 }
 
-void WCYDeviceService::deviceConnect(const QString &deviceMac)
+void WCYDeviceService::deviceStartStream(const QString &deviceMac)
 {
-    DeviceInfo dInfo;
-    for (const auto& dev: _devices) {
-        if (dev.deviceMac == deviceMac) {
-            dInfo = dev;
-            break;
-        }
+    auto it = std::find_if(_devices.begin(), _devices.end(),
+                           [&deviceMac](const DeviceInfo& dev) { return dev.deviceMac == deviceMac.toStdString(); });
+
+    if (it == _devices.end()) {
+        return;
     }
+
+    DeviceInfo& dInfo = *it;
 
     QList<int32> ranges_idList;
     for (const auto& ch: dInfo.channels) {
@@ -107,7 +113,7 @@ void WCYDeviceService::deviceConnect(const QString &deviceMac)
     _wcyAPI->subscribeToSensorData(dInfo.deviceMac.c_str());
     _wcyAPI->subscribeToSensorEvents(dInfo.deviceMac.c_str());
 
-    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorDataReceived, [this, dInfo](const QList<SensorDataModel> &sensorData) {
+    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorDataReceived, [this, dInfo = std::move(dInfo)](const QList<SensorDataModel> &sensorData) {
 
         if (sensorData.empty()) return;
         qInfo() << "[STREAM]: " << "range id" << sensorData.first().rangeId() << ", value" << sensorData.first().dataValue();

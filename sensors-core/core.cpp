@@ -85,7 +85,7 @@ void Core::init()
     QObject::connect(_devService, &IDeviceService::scanFinished, [](IDeviceService* source) {
         auto devList = source->getCurrentConnectDevice();
         for (auto dev: devList) {
-            source->deviceConnect(dev.deviceMac.c_str());
+            source->deviceStartStream(dev.deviceMac.c_str());
         }
     });
 
@@ -95,7 +95,7 @@ void Core::init()
         source->clearDevice();
 
         if (deviceInfo.connectState == CONNECT_STATE::StateConnected) {
-            source->deviceConnect(deviceInfo.deviceMac.c_str());
+            source->deviceStartStream(deviceInfo.deviceMac.c_str());
         }
     });
 

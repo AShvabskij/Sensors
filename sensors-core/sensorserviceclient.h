@@ -60,12 +60,12 @@ signals:
     void devScanFinished(const QList<DeviceModel> &devices, const QString &error);
 
     // Connection signals
-    void deviceConnected(ConnectEnumGadget::ConnectEnum result, const QString &error);
+    void deviceConnected(const QString &mac, ConnectEnumGadget::ConnectEnum result);
     void deviceDisconnected(bool success, const QString &error);
     void deviceExited(bool success, const QString &error);
 
     // Data operations signals
-    void sensorRangeReceived(const QList<DataTypeModel> &ranges, const QString &error);
+    void sensorRangeReceived(const QString &mac, const QList<DataTypeModel> &ranges);
     void startSendDataFinished(bool success, const QString &error);
     void stopSendDataFinished(bool success, const QString &error);
     void clearZeroFinished(bool success, const QString &error);

@@ -15,7 +15,7 @@ public:
     virtual ~WCYDeviceService() {}
     virtual void startScan();
     virtual void stopScan() {}
-    virtual void deviceConnect(const QString& deviceMac);
+    virtual void deviceStartStream(const QString& deviceMac);
     virtual void deviceDisconnect(const QString& deviceMac) {}
 
     virtual void clearDevice() {}

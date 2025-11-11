@@ -140,7 +140,7 @@ public:
     virtual ~IDeviceService() {}
     virtual void startScan() = 0;
     virtual void stopScan() = 0;
-    virtual void deviceConnect(const QString& deviceMac) = 0;
+    virtual void deviceStartStream(const QString& deviceMac) = 0;
     virtual void deviceDisconnect(const QString& deviceMac) = 0;
 
     virtual void clearDevice() = 0;
