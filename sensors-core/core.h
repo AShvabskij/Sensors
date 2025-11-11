@@ -24,6 +24,10 @@ public:
 
     void init();
     void start();
+    void stop();
+
+signals:
+    void stopCompleted();
 
 private slots:
     void onSystemInit();

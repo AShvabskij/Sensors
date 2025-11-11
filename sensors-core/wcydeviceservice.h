@@ -12,13 +12,13 @@ class WCYDeviceService : public IDeviceService
 public:
     WCYDeviceService();
 
-    virtual ~WCYDeviceService() {}
+    virtual ~WCYDeviceService();
     virtual void startScan();
     virtual void stopScan() {}
     virtual void deviceStartStream(const QString& deviceMac);
-    virtual void deviceDisconnect(const QString& deviceMac) {}
+    virtual void deviceDisconnect(const QString& deviceMac);
 
-    virtual void clearDevice() {}
+    virtual void closeAll();
 
     virtual const QList<DeviceInfo> getCurrentConnectDevice() { return QList<DeviceInfo>();}
 

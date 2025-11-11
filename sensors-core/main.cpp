@@ -57,6 +57,7 @@ int main2(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    Core core;
 
     // Create simple web server
     SimpleWebServer webServer;
@@ -118,57 +119,23 @@ int main(int argc, char *argv[])
 
     window.show();
 
-    Core core;
+
     core.init();
     core.start();
 
-    // GrpcClient client;
+    QEventLoop localLoop;
+    QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
+        qDebug() << "Application about to quit, stopping core...";
+        QObject::connect(&core, &Core::stopCompleted, &localLoop, [&localLoop]() {
+            localLoop.quit();
+        });
+        core.stop();
+        webServer.stopServer();
 
-    // QString address = "http://localhost:5001";
-    // QString name = "test_name";
+        qDebug() << "Core stopped, application exiting";
 
-    // // Подключаем сигналы для вывода в консоль
-    // QObject::connect(&client, &GrpcClient::messageReceived, [](const QString &msg) {
-    //     qInfo().noquote() << "[INFO]" << msg;
-    // });
-
-    // QObject::connect(&client, &GrpcClient::streamMessageReceived, [](const QString &msg) {
-    //     qInfo().noquote() << "[STREAM]" << msg;
-    // });
-
-    // QObject::connect(&client, &GrpcClient::errorOccurred, [](const QString &error) {
-    //     qCritical().noquote() << "[ERROR]" << error;
-    // });
-
-    // // Автоматический тест при запуске
-    // QTimer::singleShot(100, [&]() {
-    //     qInfo() << "=== Starting gRPC Client Test ===";
-    //     qInfo() << "Server:" << address;
-    //     qInfo() << "Test name:" << name;
-
-    //     client.connectToServer(address);
-    // });
-
-    // // Выполняем тесты после подключения
-    // QObject::connect(&client, &GrpcClient::connectedChanged, [&](bool connected) {
-    //     if (connected) {
-    //         QTimer::singleShot(500, [&]() {
-    //             qInfo() << "\n=== Testing SayHello ===";
-    //             client.sayHello(name);
-    //         });
-
-    //         QTimer::singleShot(2000, [&]() {
-    //             qInfo() << "\n=== Testing Stream ===";
-    //             client.startStream(name);
-    //         });
-
-    //         // Завершаем приложение через 10 секунд
-    //         QTimer::singleShot(10000, [&]() {
-    //             qInfo() << "\n=== Test completed ===";
-    //             client.disconnectFromServer();
-    //         });
-    //     }
-    // });
+        localLoop.exec(); // Keep event loop running until stop completes
+    });
 
     return app.exec();
 }

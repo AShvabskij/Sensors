@@ -66,8 +66,8 @@ struct ChannelInfo {
     static const int MAX_UNITS = 3;
 
     int id = 0;
-    string symbol = "";
-    string name = "";
+    QString symbol = "";
+    QString name = "";
     int baseUnit = 0;
     int availableUnits[MAX_UNITS];
 
@@ -80,11 +80,11 @@ typedef struct DeviceInfo {
     static const int MAX_CHANNELS = 10;
 
     int id = 0; // internal unique number
-    string deviceId = ""; // external id
-    string deviceName = "";
-    string deviceMac = "";
-    string deviceType = "";
-    string displayType = ""; // name to be displayed
+    QString deviceId = ""; // external id
+    QString deviceName = "";
+    QString deviceMac = "";
+    QString deviceType = "";
+    QString displayType = ""; // name to be displayed
 
     CONNECT_TYPE connectType = CONNECT_TYPE::UNKNOWN;
     CONNECT_STATE connectState = CONNECT_STATE::StateDisconnected;
@@ -130,7 +130,7 @@ typedef struct DeviceInfo {
 typedef struct DataFlow
 {
     int deviceId;
-    string deviceMac;
+    QString deviceMac;
     int64 timestamp;
     std::map<int/*channelId*/, double> values;
 } R_DATA_FLOW;
@@ -145,7 +145,7 @@ public:
     virtual void deviceStartStream(const QString& deviceMac) = 0;
     virtual void deviceDisconnect(const QString& deviceMac) = 0;
 
-    virtual void clearDevice() = 0;
+    virtual void closeAll() = 0;
 
     virtual const QList<DeviceInfo> getCurrentConnectDevice() = 0;
 

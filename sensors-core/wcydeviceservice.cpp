@@ -14,6 +14,11 @@ WCYDeviceService::WCYDeviceService()
     });
 }
 
+WCYDeviceService::~WCYDeviceService()
+{
+    _wcyAPI->disconnectFromServer();
+}
+
 void WCYDeviceService::startScan()
 {
 //    QObject::connect(_wcyAPI.get(), SIGNAL(connectedChanged(bool)), this, SLOT(onConnected(bool)), Qt::UniqueConnection);
@@ -40,25 +45,23 @@ void WCYDeviceService::startScan()
             id++;
             DeviceInfo dInfo;
             dInfo.id = id;
-            dInfo.deviceId = dev.deviceId().toStdString();
-            dInfo.deviceMac = dev.deviceMac().toStdString();
+            dInfo.deviceId = dev.deviceId();
+            dInfo.deviceMac = dev.deviceMac();
             dInfo.connectType = CONNECT_TYPE::USBCONNECT;
             dInfo.connectState = CONNECT_STATE::StateConnected;
 
             QString devName = dev.deviceName();
             devName.remove(dev.deviceMac());
-            dInfo.deviceName = devName.toStdString();
-            dInfo.deviceType = "WCY_SENSOR_"+ devName.toStdString();
-            dInfo.displayType = devName.toStdString();
+            dInfo.deviceName = devName;
+            dInfo.deviceType = "WCY_SENSOR_"+ devName;
+            dInfo.displayType = devName;
 
             _devices.append(dInfo);
 
-            _wcyAPI->connectDevice(dInfo.deviceMac.c_str());
+            _wcyAPI->connectDevice(dInfo.deviceMac);
         }
 
         emit scanFinished(this);
-
-
     });
 
     QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::deviceConnected,
@@ -80,8 +83,8 @@ void WCYDeviceService::startScan()
                              for (const auto& range: ranges) {
                                  ChannelInfo& ch = connectedDevice.channels[chInd++];
                                  ch.id = range.rangeId();
-                                 ch.name = range.rangeName().toStdString();
-                                 ch.symbol = range.unit().toStdString();
+                                 ch.name = range.rangeName();
+                                 ch.symbol = range.unit();
                                  ch.baseUnit = range.rangeId();
                                  ch.availableUnits[0] = ch.baseUnit;
                              }
@@ -109,9 +112,9 @@ void WCYDeviceService::deviceStartStream(const QString &deviceMac)
         ranges_idList.append(ch.id);
     }
 
-    _wcyAPI->startSendData(dInfo.deviceMac.c_str(), ranges_idList);
-    _wcyAPI->subscribeToSensorData(dInfo.deviceMac.c_str());
-    _wcyAPI->subscribeToSensorEvents(dInfo.deviceMac.c_str());
+    _wcyAPI->startSendData(dInfo.deviceMac, ranges_idList);
+    _wcyAPI->subscribeToSensorData(dInfo.deviceMac);
+    _wcyAPI->subscribeToSensorEvents(dInfo.deviceMac);
 
     QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorDataReceived, [this, dInfo = std::move(dInfo)](const QList<SensorDataModel> &sensorData) {
 
@@ -125,7 +128,7 @@ void WCYDeviceService::deviceStartStream(const QString &deviceMac)
 
         for (auto value: sensorData) {
             int chId = value.rangeId();
-
+            // todo: check if dInfo contains channel with id = chId
             dFlow.values[chId] = value.dataValue();
         }
 
@@ -135,6 +138,24 @@ void WCYDeviceService::deviceStartStream(const QString &deviceMac)
     QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::sensorEventReceived, [](const QString &deviceMac, const QString &eventType, const QString &message) {
         qInfo() << "[INFO]: " << "device " << deviceMac << "event" << eventType << "message" << message;
     });
+}
+
+void WCYDeviceService::deviceDisconnect(const QString &deviceMac)
+{
+    _wcyAPI->stopSendData(deviceMac);
+    QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::stopSendDataFinished,
+                     [this, deviceMac](bool success, const QString &error) {
+                        _wcyAPI->deviceExit(deviceMac);
+                     });
+
+}
+
+void WCYDeviceService::closeAll()
+{
+    for (const auto& dInfo: _devices) {
+        _wcyAPI->stopSendData(dInfo.deviceMac);
+        _wcyAPI->deviceExit(dInfo.deviceMac);
+    }
 }
 
 void WCYDeviceService::onConnected(bool connected) {

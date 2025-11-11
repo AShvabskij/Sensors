@@ -23,6 +23,7 @@ Core::~Core()
 {
     delete m_cmdServer;
     delete m_streamServer;
+    _devService->deleteLater();
 }
 
 int Core::handle(const QJsonObject &request)
@@ -82,19 +83,20 @@ void Core::init()
     _devService = new WCYDeviceService();
 
     QObject::connect(_devService, &IDeviceService::scanFinished, [](IDeviceService* source) {
-        auto devList = source->getCurrentConnectDevice();
-        for (auto dev: devList) {
-            source->deviceStartStream(dev.deviceMac.c_str());
-        }
+        // auto devList = source->getCurrentConnectDevice();
+        // for (auto dev: devList) {
+        //     source->deviceStartStream(dev.deviceMac);
+        // }
     });
 
     QObject::connect(_devService, &IDeviceService::updatedeviceStatus, [this](IDeviceService* source, DeviceInfo deviceInfo) {
         auto dtoToSend = convertInfoToDTO(deviceInfo);
         this->send(dtoToSend);
-        source->clearDevice();
 
         if (deviceInfo.connectState == CONNECT_STATE::StateConnected) {
-            source->deviceStartStream(deviceInfo.deviceMac.c_str());
+            source->deviceStartStream(deviceInfo.deviceMac);
+        } else {
+            source->deviceDisconnect(deviceInfo.deviceMac);
         }
     });
 
@@ -122,6 +124,24 @@ void Core::start()
 //         m_threadFuture = QtConcurrent::run(&Core::thread_proc, this);
 //     }
 // #endif
+}
+
+void Core::stop()
+{
+    _devService->disconnect();
+
+    if (_devService != nullptr) {
+        _devService->closeAll();
+
+        // Non-blocking delay using QTimer
+        QTimer::singleShot(3000, [this]() {
+            qDebug() << "Device service cleanup completed";
+            emit stopCompleted(); // Optional: emit signal when done
+        });
+    } else {
+        qDebug() << "Core stopped (no device service)";
+        emit stopCompleted(); // Optional: emit signal when done
+    }
 }
 
 void Core::thread_proc()
@@ -297,11 +317,11 @@ QJsonObject Core::convertInfoToDTO(DeviceInfo dev) {
             units << ch.availableUnits[jj];
         }
 
-        channels.append(DeviceGenerator::createChannel(ch.id, ch.symbol.c_str(), ch.name.c_str(), ch.baseUnit, units));
+        channels.append(DeviceGenerator::createChannel(ch.id, ch.symbol, ch.name, ch.baseUnit, units));
     }
 
     _devices.append(DeviceGenerator::generateSensor(
-        dev.deviceMac.c_str(), dev.deviceType.c_str(), dev.deviceId.c_str(), dev.deviceName.c_str(),dev.displayType.c_str(), true, channels));
+        dev.deviceMac, dev.deviceType, dev.deviceId, dev.deviceName,dev.displayType, true, channels));
 
     root["data"] = _devices;
 
@@ -314,7 +334,7 @@ QJsonObject Core::convertFlowToDTO(DataFlow data) {
     root["type"] = "sensor_data";
 
     QJsonObject dataObj;
-    dataObj["address"] = data.deviceMac.c_str();
+    dataObj["address"] = data.deviceMac;
 
     QJsonObject sensorData;
 
