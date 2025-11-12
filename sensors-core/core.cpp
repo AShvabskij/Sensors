@@ -76,7 +76,8 @@ void Core::init()
     // m_startTimer = new QTimer(this);
     // m_startTimer->setSingleShot(true);
     // QObject::connect(m_startTimer, &QTimer::timeout, [this]() {
-    //     executeScript(SCRIPT_ON_START);
+    // executeScript(SCRIPT_ON_START);
+    startSensorServer();
     // });
     // m_startTimer->start(7000);
 
@@ -135,7 +136,9 @@ void Core::stop()
 
         // Non-blocking delay using QTimer
         QTimer::singleShot(3000, [this]() {
+            _devService->exit();
             qDebug() << "Device service cleanup completed";
+            stopSensorServer();
             emit stopCompleted(); // Optional: emit signal when done
         });
     } else {
@@ -182,69 +185,51 @@ void Core::onSystemInit()
 
 long Core::executeScript(const QString& script)
 {
-
 #ifndef Q_OS_WIN
-    QString scriptPath = QDir::homePath() + "/projects/scripts/" + script + ".sh";
+    QString scriptPath = QDir::homePath() + "/projects/scripts/" + script + ".bat";
 #else
     QString scriptPath = QCoreApplication::applicationDirPath() + "/" + script + ".bat";
 #endif
 
-
     QFileInfo scriptInfo(scriptPath);
 
     if (!scriptInfo.exists()) {
-        qDebug() << "Error: Script file does not exist at" << script;
+        qDebug() << "Error: Script file does not exist at" << scriptPath;
         return _return_FAIL;
     }
 
-#ifndef Q_OS_WIN
-    if (!scriptInfo.isExecutable()) {
-        qDebug() << "Error: Script is not executable. Run: chmod +x" << scriptPath;
-        return _return_FAIL;
-    }
-#endif
-
-    QProcess process;
-//    process.setProcessChannelMode(QProcess::MergedChannels); // Combine stdout and stderr
-
-    static QString SCRIPT_NAME = "";
-    if (SCRIPT_NAME != script) {
-        qDebug() << "Running " << scriptPath << "...";
-    }
+    qDebug() << "Running" << scriptPath << "...";
 
 #ifdef Q_OS_WIN
-    process.start("cmd.exe", QStringList() << "/C" << scriptPath);
+    // Запускаем процесс напрямую, без cmd.exe
+    _process.start(scriptPath);
 #else
-    // Make sure script has execute permissions
-    process.start("bash", QStringList() << scriptPath);
+    _process.start("bash", QStringList() << scriptPath);
 #endif
 
-    if (!process.waitForStarted()) {
+    if (!_process.waitForStarted(5000)) {
         qDebug() << "Error: Failed to start script";
         return _return_FAIL;
     }
 
-    if (!process.waitForFinished(30000)) {
-        qDebug() << "Error: Process timed out";
-        process.kill();
-        return _return_FAIL;
-    }
+    qDebug() << "Script" << scriptPath << "started successfully";
+    qDebug() << "Process PID:" << _process.processId();
 
-    QString allOutput = QString::fromUtf8(process.readAll());
-    int exitCode = process.exitCode();
+    // Не ждем завершения, так как процесс должен работать постоянно
+    // Подключаем сигналы для отслеживания состояния
+    QObject::connect(&_process, &QProcess::readyReadStandardOutput, [this]() {
+        qDebug() << "Script stdout:" << _process.readAllStandardOutput();
+    });
 
-    if (exitCode != 0) {
-        qDebug() << "Error: Script failed with exit code" << exitCode;
-        qDebug() << "Output:" << allOutput;
-        return _return_FAIL;
-    }
+    QObject::connect(&_process, &QProcess::readyReadStandardError, [this]() {
+        qDebug() << "Script stderr:" << _process.readAllStandardError();
+    });
 
-    if (SCRIPT_NAME != script) {
-        qDebug() << "Script" << scriptPath << "executed successfully";
-    }
-
-    //  qDebug() << "Output:" << allOutput;
-    SCRIPT_NAME = script;
+    QObject::connect(&_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                     [](int exitCode, QProcess::ExitStatus exitStatus) {
+                         qDebug() << "Script finished with exit code:" << exitCode
+                                  << "exit status:" << exitStatus;
+                     });
 
     return _return_OK;
 }
@@ -301,7 +286,7 @@ QJsonObject Core::convertInfoToDTO(DeviceInfo dev) {
     QJsonObject root;
     root["type"] = "devices_update";
 
-    _devices = QJsonArray();
+    QJsonArray devices = QJsonArray();
     // Вольтметр
     QJsonArray units;
     QJsonArray channels;
@@ -320,10 +305,10 @@ QJsonObject Core::convertInfoToDTO(DeviceInfo dev) {
         channels.append(DeviceGenerator::createChannel(ch.id, ch.symbol, ch.name, ch.baseUnit, units));
     }
 
-    _devices.append(DeviceGenerator::generateSensor(
+    devices.append(DeviceGenerator::generateSensor(
         dev.deviceMac, dev.deviceType, dev.deviceId, dev.deviceName,dev.displayType, true, channels));
 
-    root["data"] = _devices;
+    root["data"] = devices;
 
     return root;
 }
@@ -379,4 +364,91 @@ QList<QJsonObject> Core::generateData() {
     }
 
     return sensorsDataArray;
+}
+
+long Core::startSensorServer()
+{
+#ifndef QT_DEBUG
+    stopProcessByNameDirect("WCYSensorRPCApi.exe");
+#endif
+
+    QString exePath = QCoreApplication::applicationDirPath() + "/WCY-SDK/WCYSensorRPCApi.exe";
+    QFileInfo exeInfo(exePath);
+
+    if (!exeInfo.exists()) {
+        qDebug() << "Error: WCYSensorRPCApi.exe not found at" << exePath;
+        return _return_FAIL;
+    }
+
+    qDebug() << "Starting WCYSensorRPCApi.exe from" << exePath;
+
+    if (_process.state() == QProcess::Running) {
+        qDebug() << "Server WCYSensorRPCApi.exe is already running";
+        return _return_OK;
+    }
+
+    _process.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/WCY-SDK");
+    _process.start(exePath);
+
+    if (!_process.waitForStarted(5000)) {
+        qDebug() << "Error: Failed to start WCYSensorRPCApi.exe";
+        qDebug() << "Error string:" << _process.errorString();
+        return _return_FAIL;
+    }
+
+    qDebug() << "WCYSensorRPCApi.exe started successfully";
+    qDebug() << "Process PID:" << _process.processId();
+
+    // Подключаем обработчики для чтения вывода
+    QObject::connect(&_process, &QProcess::readyReadStandardOutput, [this]() {
+        QString output = _process.readAllStandardOutput();
+        qDebug() << "WCYSensorRPCApi:" << output.trimmed();
+    });
+
+    QObject::connect(&_process, &QProcess::readyReadStandardError, [this]() {
+        QString error = _process.readAllStandardError();
+        qDebug() << "WCYSensorRPCApi ERROR:" << error.trimmed();
+    });
+
+    QObject::connect(&_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                     [](int exitCode, QProcess::ExitStatus exitStatus) {
+                         qDebug() << "WCYSensorRPCApi.exe finished with exit code:" << exitCode;
+
+                     });
+
+    return _return_OK;
+}
+
+long Core::stopSensorServer()
+{
+    if (_process.state() == QProcess::Running) {
+        qDebug() << "Stopping WCYSensorRPCApi.exe...";
+        _process.terminate();
+
+        if (!_process.waitForFinished(1000)) {
+            qDebug() << "Force killing WCYSensorRPCApi.exe...";
+            _process.kill();
+        }
+
+        qDebug() << "WCYSensorRPCApi.exe stopped";
+
+
+
+        return _return_OK;
+    }
+    return _return_FAIL;
+}
+
+bool Core::stopProcessByNameDirect(const QString& processName)
+{
+    QProcess killProcess;
+    killProcess.start("taskkill", QStringList() << "/IM" << processName << "/F");
+
+    if (killProcess.waitForFinished(5000)) {
+        qDebug() << "Process" << processName << "stopped";
+        return true;
+    } else {
+        qDebug() << "Failed to stop process" << processName;
+        return false;
+    }
 }

@@ -16,7 +16,7 @@ WCYDeviceService::WCYDeviceService()
 
 WCYDeviceService::~WCYDeviceService()
 {
-    _wcyAPI->disconnectFromServer();
+    qDebug() << "~WCYDeviceService";
 }
 
 void WCYDeviceService::startScan()
@@ -25,8 +25,8 @@ void WCYDeviceService::startScan()
 
     QObject::connect(_wcyAPI.get(), &WCYServiceWrapper::connectedChanged, [this](bool connected) {
         if (connected) {
-            //  client->scanBLE(5000); // 5 секунд сканирования
-            _wcyAPI->scanUSB();
+            // _wcyAPI->scanUSB();
+            _wcyAPI->scanBLE(10000); // 10 секунд сканирования
         } else {
             qCritical().noquote() << "[ERROR]" << "server is disconnected";
         }
@@ -58,8 +58,10 @@ void WCYDeviceService::startScan()
 
             _devices.append(dInfo);
 
-            _wcyAPI->connectDevice(dInfo.deviceMac);
+//            _wcyAPI->connectDevice(dInfo.deviceMac);
         }
+
+        _wcyAPI->connectDevice(_devices.first().deviceMac);
 
         emit scanFinished(this);
     });
@@ -154,15 +156,20 @@ void WCYDeviceService::closeAll()
 {
     for (const auto& dInfo: _devices) {
         _wcyAPI->stopSendData(dInfo.deviceMac);
-        _wcyAPI->deviceExit(dInfo.deviceMac);
+//      _wcyAPI->deviceExit(dInfo.deviceMac);
     }
 }
 
-void WCYDeviceService::onConnected(bool connected) {
-    if (connected) {
-        //  client->scanBLE(5000); // 5 секунд сканирования
-        _wcyAPI->scanUSB();
-    } else {
-        qCritical() << "[ERROR]" << "server is disconnected";
-    }
+void WCYDeviceService::exit()
+{
+    _wcyAPI->disconnectFromServer();
 }
+
+// void WCYDeviceService::onConnected(bool connected) {
+//     if (connected) {
+//         _wcyAPI->scanBLE(5000);
+//         _wcyAPI->scanUSB();
+//     } else {
+//         qCritical() << "[ERROR]" << "server is disconnected";
+//     }
+// }

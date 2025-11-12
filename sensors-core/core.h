@@ -45,6 +45,10 @@ private:
 
     void TestSensorRPC();
 
+    long startSensorServer();
+    long stopSensorServer();
+    bool stopProcessByNameDirect(const QString& processName);
+
     SocketServer* m_cmdServer = nullptr;
     SocketServer* m_streamServer = nullptr;
 
@@ -57,7 +61,7 @@ private:
 
     DeviceModel _connectedDevice;
     std::unique_ptr<WCYServiceWrapper> _wcyAPI;
-
+    QProcess _process;
     IDeviceService* _devService;
 };
 

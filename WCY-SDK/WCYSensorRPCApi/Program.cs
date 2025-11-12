@@ -6,6 +6,7 @@ using GrpcServer.Services;
 
 using GrpcSensorServer;
 using GrpcSensorServer.Services;
+using System.Threading;
 
 namespace WCYSensorRPCApi
 {
@@ -28,20 +29,24 @@ namespace WCYSensorRPCApi
                     Services = { 
                         SensorService.BindService(sensorService),
                         Greeter.BindService(new GreeterService())
-                    },
+                     },
                     Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
                 };
 
                 server.Start();
 
                 Console.WriteLine($"✅ Sensor Service gRPC Server is listening on port {Port} ");
-                Console.WriteLine("Press 'q' to stop the server...");
+                Console.WriteLine("Server is running in background mode.");
 
-                // Keep the server running until 'q' is pressed
-                while (Console.ReadKey().Key != ConsoleKey.Q)
-                {
-                    Console.WriteLine("\nPress 'q' to stop the server...");
-                }
+                // Просто ждем бесконечно - сервер будет работать пока процесс не будет убит
+                Thread.Sleep(Timeout.Infinite);
+
+                //Console.WriteLine("Press 'q' to stop the server...");
+                //// Keep the server running until 'q' is pressed
+                //while (Console.ReadKey().Key != ConsoleKey.Q)
+                //{
+                //    Console.WriteLine("\nPress 'q' to stop the server...");
+                //}
 
                 Console.WriteLine("\nShutting down server...");
                 sensorService.CloseAll();

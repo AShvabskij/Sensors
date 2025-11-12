@@ -95,7 +95,7 @@ void WCYServiceWrapper::scanBLE(int32_t timeout)
         BLEScanRequest request;
         request.setTimeout(timeout);
 
-        auto reply = m_client->BLEScan(request, QGrpcCallOptions{}.setDeadlineTimeout(10s));
+        auto reply = m_client->BLEScan(request, QGrpcCallOptions{}.setDeadlineTimeout(20s));
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,
@@ -128,7 +128,7 @@ void WCYServiceWrapper::scanUSB()
     try {
         USBScanRequest request;
 
-        auto reply = m_client->USBScan(request, QGrpcCallOptions{}.setDeadlineTimeout(10s));
+        auto reply = m_client->USBScan(request, QGrpcCallOptions{}.setDeadlineTimeout(20s));
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,

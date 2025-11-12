@@ -19,11 +19,12 @@ public:
     virtual void deviceDisconnect(const QString& deviceMac);
 
     virtual void closeAll();
+    virtual void exit();
 
     virtual const QList<DeviceInfo> getCurrentConnectDevice() { return QList<DeviceInfo>();}
 
 private slots:
-    void onConnected(bool connected);
+//    void onConnected(bool connected);
 
 private:
     QList<DeviceInfo> _devices;

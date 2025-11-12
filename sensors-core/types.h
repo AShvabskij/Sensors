@@ -146,6 +146,7 @@ public:
     virtual void deviceDisconnect(const QString& deviceMac) = 0;
 
     virtual void closeAll() = 0;
+    virtual void exit() = 0;
 
     virtual const QList<DeviceInfo> getCurrentConnectDevice() = 0;
 
