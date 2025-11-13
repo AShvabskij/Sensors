@@ -127,14 +127,6 @@ int main(int argc, char *argv[])
 
     QEventLoop localLoop;
     QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
-        qDebug() << "Application about to quit, stopping core...";
-        qDebug() << "=== DEBUG: aboutToQuit called ===";
-        qDebug() << "Active timers:" << QObject::tr("недоступно"); // Нет прямого доступа к таймерам
-//        qDebug() << "Pending events:" << QApplication::
-
-        // Проверяем какие объекты живы
-        qDebug() << "Top level widgets:" << QApplication::topLevelWidgets().count();
-        qDebug() << "All widgets:" << QApplication::allWidgets().count();
 
         QObject::connect(&core, &Core::stopCompleted, &localLoop, [&localLoop, &app]() {
             localLoop.quit();
@@ -147,14 +139,6 @@ int main(int argc, char *argv[])
 
         localLoop.exec(); // Keep event loop running until stop completes
 
-        QApplication::processEvents();
-        QTimer::singleShot(0, &app, &QCoreApplication::quit);
-        app.quit();
-//      Запускаем таймер на принудительное завершение
-        // QTimer::singleShot(3000, &app, [&app]() { // 3 секунды таймаут
-        //     qWarning() << "Forcing application exit after timeout";
-        //     app.quit();
-        // });
     });
 
     return app.exec();

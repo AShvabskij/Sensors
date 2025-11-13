@@ -23,7 +23,6 @@ Core::~Core()
 {
     delete m_cmdServer;
     delete m_streamServer;
-    _devService->deleteLater();
 }
 
 int Core::handle(const QJsonObject &request)
@@ -129,22 +128,25 @@ void Core::start()
 
 void Core::stop()
 {
-    _devService->disconnect();
-
-    if (_devService != nullptr) {
-        _devService->closeAll();
-
-        // Non-blocking delay using QTimer
-        QTimer::singleShot(3000, [this]() {
-            _devService->exit();
-            qDebug() << "Device service cleanup completed";
-            stopSensorServer();
-            emit stopCompleted(); // Optional: emit signal when done
-        });
-    } else {
+    if (_devService == nullptr) {
         qDebug() << "Core stopped (no device service)";
         emit stopCompleted(); // Optional: emit signal when done
     }
+
+    _devService->disconnect();
+
+    _devService->closeAll();
+
+    // Non-blocking delay using QTimer
+    QTimer::singleShot(3000, [this]() {
+        _devService->exit();
+        qDebug() << "Device service cleanup completed";
+        stopSensorServer();
+        emit stopCompleted(); // Optional: emit signal when done
+    });
+
+    _devService->deleteLater();
+    _devService = nullptr;
 }
 
 void Core::thread_proc()

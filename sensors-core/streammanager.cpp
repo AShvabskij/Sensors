@@ -146,7 +146,7 @@ StreamManager::StreamManager()
 
 StreamManager::~StreamManager() {
     m_workerThread->quit();
-    m_workerThread->wait();
+//  m_workerThread->wait(); // not allowed in destructor - app freezes when closing
     delete m_worker;
     QTextStream(stdout) << " Total bytes sended = " << m_totalBytes << "\n";
 }
