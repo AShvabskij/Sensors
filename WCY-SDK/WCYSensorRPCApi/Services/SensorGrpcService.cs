@@ -24,17 +24,16 @@ namespace GrpcSensorServer.Services
         private readonly Dictionary<string, List<IServerStreamWriter<SensorEventMessage>>> _eventSubscribers
             = new Dictionary<string, List<IServerStreamWriter<SensorEventMessage>>>();
 
-        private readonly Dictionary<string, string> _deviceDataMapping = new Dictionary<string, string>();
+        private readonly Dictionary<string, List<int>> _deviceDataMapping = new Dictionary<string, List<int>>();
         private readonly Dictionary<int/*rangeId*/, WCY.DisLab.SDK.Devices.Model.DataTypeModel> _ranges = new Dictionary<int, WCY.DisLab.SDK.Devices.Model.DataTypeModel>();
 
         public SensorGrpcService()
         {
-            Console.WriteLine("Initializing SensorGrpcService...");
-            _sensorService.SensorDataHandler += OnSensorDataReceived;
-            _sensorService.SensorRemovceHandler += OnSensorRemoved;
-
             bool initResult = _sensorService.Initialize("en");
             Console.WriteLine($"Sensor service initialized: {initResult}");
+
+            _sensorService.SensorDataHandler += OnSensorDataReceived;
+            _sensorService.SensorRemovceHandler += OnSensorRemoved;
         }
 
         // Simple logging methods
@@ -64,6 +63,9 @@ namespace GrpcSensorServer.Services
         {
             try
             {
+                bool initResult = _sensorService.Initialize("en");
+                Console.WriteLine($"Sensor service initialized: {initResult}");
+
                 LogInfo($"Starting BLE scan with timeout: {request.Timeout}ms");
                 var devices = await _sensorService.BLEScan(request.Timeout);
 
@@ -176,20 +178,22 @@ namespace GrpcSensorServer.Services
                 LogInfo($"Starting data send for device: {request.DeviceMac}");
 
                 List<WCY.DisLab.SDK.Devices.Model.DataTypeModel> dataTypes = new List<WCY.DisLab.SDK.Devices.Model.DataTypeModel>();
+
+                _deviceDataMapping[request.DeviceMac] = new List<int>();
                 foreach (int id in request.RangeIdList)
                 {
                     dataTypes.Add(_ranges[id]);
+                    _deviceDataMapping[request.DeviceMac].Add(id);
+
                 }
 
                 //                var dataTypes = request.DataTypes.Select(FromGrpcDataTypeModel).ToList();
                 var result = await _sensorService.StartSendData(request.DeviceMac, dataTypes);
-
-                if (result == true)
+                if (result == false)
                 {
-                    // Store device mapping for data routing
                     lock (_deviceDataMapping)
                     {
-                        _deviceDataMapping[request.DeviceMac] = request.DeviceMac;
+                        _deviceDataMapping[request.DeviceMac].Clear();
                     }
                 }
 
@@ -454,7 +458,7 @@ namespace GrpcSensorServer.Services
 
         public async void CloseAll()
         {
-            foreach(string device in _deviceDataMapping.Values)
+            foreach(string device in _deviceDataMapping.Keys)
             {
                 bool res = _sensorService.DisConnect(device);
                 if (res)
@@ -481,10 +485,10 @@ namespace GrpcSensorServer.Services
                     DataValue = d.DataValue ?? 0
                 }));
 
-                foreach (var d in data)
-                {
-                    LogInfo($"Sensor data for {deviceMac} rangeId: {d.RangeId} value: {d.DataValue}");
-                }
+                //foreach (var d in data)
+                //{
+                //    LogInfo($"Sensor data for {deviceMac} rangeId: {d.RangeId} value: {d.DataValue}");
+                //}
 
                 // Broadcast to all subscribers for this device
                 List<IServerStreamWriter<SensorDataMessage>> subscribers;
@@ -492,7 +496,7 @@ namespace GrpcSensorServer.Services
                 {
                     if (!_dataSubscribers.TryGetValue(deviceMac, out subscribers) || subscribers.Count == 0)
                         return;
-                    subscribers = subscribers.ToList(); // Create a copy to avoid modification during iteration
+                    // subscribers = subscribers.ToList(); // Create a copy to avoid modification during iteration
                 }
 
                 foreach (var subscriber in subscribers)
@@ -563,7 +567,12 @@ namespace GrpcSensorServer.Services
             // a more sophisticated device-data mapping based on your requirements
             lock (_deviceDataMapping)
             {
-                return _deviceDataMapping.FirstOrDefault().Value;
+                foreach (string device in _deviceDataMapping.Keys)
+                {
+                    if (_deviceDataMapping[device].Contains(data.FirstOrDefault().RangeId)) return device;
+                }
+
+                return "";
             }
         }
 
