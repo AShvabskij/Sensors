@@ -35,6 +35,10 @@ qt_add_executable(appSensors
     device_generator.h
     simplewebserver.h
     simplewebserver.cpp
+    wcydeviceservice.h
+    wcydeviceservice.cpp
+    wcygrpcwrapper.h
+    wcygrpcwrapper.cpp
 )
 
 qt_add_qml_module(appSensors
@@ -44,8 +48,8 @@ qt_add_qml_module(appSensors
         Main.qml
         SOURCES grpc_client.h
         SOURCES grpc_client.cpp
-        SOURCES sensorserviceclient.h sensorserviceclient.cpp
-        SOURCES wcydeviceservice.h wcydeviceservice.cpp
+
+
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

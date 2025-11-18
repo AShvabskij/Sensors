@@ -79,7 +79,7 @@ signals:
     void frequencySet(bool success, const QString &error);
 
     // Streaming signals
-    void sensorDataReceived(const QList<SensorDataModel> &sensorData);
+    void sensorDataReceived(const QString &deviceMac, const QList<SensorDataModel> &sensorData);
     void sensorEventReceived(const QString &deviceMac, const QString &eventType, const QString &message);
 
 private:
@@ -90,8 +90,11 @@ private:
     QGrpcChannelOptions m_channelOptions;
 
     std::unique_ptr<SensorService::Client> m_client;
-    std::unique_ptr<QGrpcServerStream> m_sensorDataStream;
-    std::unique_ptr<QGrpcServerStream> m_sensorEventsStream;
+    QMap<QString/*deviceMac*/, std::shared_ptr<QGrpcServerStream>> m_sensorDataStream;
+    QMap<QString/*deviceMac*/, std::shared_ptr<QGrpcServerStream>> m_sensorEventsStream;
+
+    QMap<QString/*deviceMac*/, QMetaObject::Connection> _sensorDataReceived;
+    QMap<QString/*deviceMac*/, QMetaObject::Connection> _eventDataReceived;
 
     bool m_connected;
 };

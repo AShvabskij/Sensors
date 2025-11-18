@@ -7,8 +7,6 @@
 
 #include "basereqhandler.h"
 
-#include "sensorserviceclient.h"
-
 class IDDE;
 class IDDE_Dispatcher;
 class DataUsbCopier;
@@ -40,7 +38,7 @@ private:
 
     QJsonObject generateDevicesUpdate();
     QList<QJsonObject> generateData();
-    QJsonObject convertInfoToDTO(DeviceInfo dev);
+    QJsonObject convertInfoToDTO(QList<DeviceInfo> dev_list);
     QJsonObject convertFlowToDTO(DataFlow data);
 
     void TestSensorRPC();
@@ -57,11 +55,9 @@ private:
     QTimer* m_startTimer;
     bool m_isActivated = false;
 
-    QJsonArray _devices;
+    QJsonArray m_devices;
 
-    DeviceModel _connectedDevice;
-    std::unique_ptr<WCYServiceWrapper> _wcyAPI;
-    QProcess _process;
+    QProcess m_process;
     IDeviceService* _devService;
 };
 

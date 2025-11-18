@@ -1,4 +1,4 @@
-#include "sensorserviceclient.h"
+#include "wcygrpcwrapper.h"
 
 #include <QtCore/QUrl>
 #include <QtGrpc/QGrpcChannelOptions>
@@ -65,12 +65,12 @@ void WCYServiceWrapper::connectToServer(const QString &address)
 
 void WCYServiceWrapper::disconnectFromServer()
 {
-    if (m_sensorDataStream) {
-        m_sensorDataStream.reset();
-    }
+    for (auto stream : m_sensorDataStream.values()) {
+        stream.reset();
+    };
 
-    if (m_sensorEventsStream) {
-        m_sensorEventsStream.reset();
+    for (auto stream : m_sensorEventsStream.values()) {
+        stream.reset();
     }
 
     if (m_client) {
@@ -95,7 +95,7 @@ void WCYServiceWrapper::scanBLE(int32_t timeout)
         BLEScanRequest request;
         request.setTimeout(timeout);
 
-        auto reply = m_client->BLEScan(request, QGrpcCallOptions{}.setDeadlineTimeout(20s));
+        auto reply = m_client->BLEScan(request, QGrpcCallOptions{}.setDeadlineTimeout(std::chrono::milliseconds(timeout * 2)));
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,
@@ -623,27 +623,33 @@ void WCYServiceWrapper::subscribeToSensorData(const QString &deviceMac)
         SubscribeRequest request;
         request.setDeviceMac(deviceMac);
 
-        m_sensorDataStream = m_client->SubscribeToSensorData(request, QGrpcCallOptions{});
+        m_sensorDataStream[deviceMac] = m_client->SubscribeToSensorData(request, QGrpcCallOptions{});
 
-        if (!m_sensorDataStream) {
+        if (!m_sensorDataStream[deviceMac]) {
             emit errorOccurred("Failed to start sensor data stream");
             return;
         }
 
-        connect(m_sensorDataStream.get(), &QGrpcServerStream::messageReceived, this,
-                [this]() mutable {
+        if (_sensorDataReceived.contains(deviceMac)) {
+            disconnect(_sensorDataReceived[deviceMac]);
+        }
+
+        _sensorDataReceived[deviceMac] = connect(m_sensorDataStream[deviceMac].get(), &QGrpcServerStream::messageReceived, this,
+                [this, deviceMac, dataStream = m_sensorDataStream[deviceMac]]() mutable {
                     SensorDataMessage message;
-                    if (!m_sensorDataStream->read(&message))
+                    if (!dataStream->read(&message))
                         return;
-                    emit sensorDataReceived(message.sensorData());
+                    emit sensorDataReceived(deviceMac, message.sensorData());
                 });
 
-        connect(m_sensorDataStream.get(), &QGrpcServerStream::finished, this,
-                [this](const QGrpcStatus &status) {
-                    if (!status.isOk()) {
+        connect(m_sensorDataStream[deviceMac].get(), &QGrpcServerStream::finished, this,
+                [this, deviceMac](const QGrpcStatus &status) {
+                    if (status.isOk()) {
+                        emit messageReceived("Sensor data stream stopped for device: " + deviceMac);
+                    } else {
                         emit errorOccurred(QString("Sensor data stream error: %1").arg(status.message()));
                     }
-                });
+                }, Qt::SingleShotConnection);
 
         emit messageReceived("Sensor data stream started for device: " + deviceMac);
 
@@ -663,27 +669,31 @@ void WCYServiceWrapper::subscribeToSensorEvents(const QString &deviceMac)
         SubscribeRequest request;
         request.setDeviceMac(deviceMac);
 
-        m_sensorEventsStream = m_client->SubscribeToSensorEvents(request, QGrpcCallOptions{});
+        m_sensorEventsStream[deviceMac] = m_client->SubscribeToSensorEvents(request, QGrpcCallOptions{});
 
-        if (!m_sensorEventsStream) {
+        if (!m_sensorEventsStream[deviceMac]) {
             emit errorOccurred("Failed to start sensor events stream");
             return;
         }
 
-        connect(m_sensorEventsStream.get(), &QGrpcServerStream::messageReceived, this,
-                [this]() mutable {
+        if (_eventDataReceived.contains(deviceMac)) {
+            disconnect(_eventDataReceived[deviceMac]);
+        }
+
+        _eventDataReceived[deviceMac] = connect(m_sensorEventsStream[deviceMac].get(), &QGrpcServerStream::messageReceived, this,
+                [this, eventStream = m_sensorEventsStream[deviceMac]]() mutable {
                     SensorEventMessage message;
-                    if (!m_sensorEventsStream->read(&message))
+                    if (!eventStream->read(&message))
                         return;
                     emit sensorEventReceived(message.deviceMac(), message.eventType(), message.message());
                 });
 
-        connect(m_sensorEventsStream.get(), &QGrpcServerStream::finished, this,
+        connect(m_sensorEventsStream[deviceMac].get(), &QGrpcServerStream::finished, this,
                 [this](const QGrpcStatus &status) {
                     if (!status.isOk()) {
                         emit errorOccurred(QString("Sensor events stream error: %1").arg(status.message()));
                     }
-                });
+                }, Qt::SingleShotConnection);
 
         emit messageReceived("Sensor events stream started for device: " + deviceMac);
 

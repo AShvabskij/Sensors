@@ -58,8 +58,9 @@ constexpr const char* ConnectTypeToString(CONNECT_TYPE type) {
 enum CONNECT_STATE{
     StateDisconnected = 0,
     StateConnecting,
+    StateReady,
     StateConnected,
-    StateDisconnecting
+    StateStopped
 };
 
 struct ChannelInfo {
@@ -127,13 +128,12 @@ typedef struct DeviceInfo {
 
 } dInfo;
 
-typedef struct DataFlow
+struct DataFlow
 {
-    int deviceId;
     QString deviceMac;
     int64 timestamp;
     std::map<int/*channelId*/, double> values;
-} R_DATA_FLOW;
+};
 
 class IDeviceService : public QObject
 {
@@ -143,15 +143,17 @@ public:
     virtual void startScan() = 0;
     virtual void stopScan() = 0;
     virtual void deviceStartStream(const QString& deviceMac) = 0;
+
+    virtual void deviceConnect(const QString& deviceMac) = 0;
     virtual void deviceDisconnect(const QString& deviceMac) = 0;
 
-    virtual void closeAll() = 0;
+    virtual void stopAll() = 0;
     virtual void exit() = 0;
 
-    virtual const QList<DeviceInfo> getCurrentConnectDevice() = 0;
+    virtual const QList<DeviceInfo> getConnectedDeviceList() = 0;
 
 // signals:
-    Q_SIGNAL void  updatedeviceStatus(IDeviceService* source, DeviceInfo deviceInfo);
+    Q_SIGNAL void  updatedeviceStatus(IDeviceService* source, const DeviceInfo& deviceInfo);
     Q_SIGNAL void dataRecieve(DataFlow data);
     Q_SIGNAL void scanFinished(IDeviceService* source);
 };

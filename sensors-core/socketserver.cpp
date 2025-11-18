@@ -115,7 +115,7 @@ void SocketServer::stop()
 void SocketServer::onNewConnection()
 {
     QWebSocket* pSocket = m_socketServer->nextPendingConnection();
-    QTextStream(stdout) << getIdentifier(pSocket) << " connected! " << "port = " << m_port << "\n";
+    qDebug() << getIdentifier(pSocket) << " connected! " << "port = " << m_port << "\n";
     pSocket->setParent(this);
 
     connect(pSocket, &QWebSocket::textMessageReceived,
@@ -144,7 +144,7 @@ void SocketServer::onNewConnection()
 void SocketServer::onCloseConnection()
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    QTextStream(stdout) << getIdentifier(pClient) << " disconnected!\n";
+    qDebug() << getIdentifier(pClient) << " disconnected!\n";
     if (pClient) {
         m_response->unregisterClient(pClient);
         pClient->deleteLater();
@@ -155,7 +155,7 @@ void SocketServer::onCloseConnection()
 
 void SocketServer::processMessage(const QString &message)
 {
-    QTextStream(stdout) << "process message " << message << "\n";
+    qDebug() << "process message " << message << "\n";
     QJsonObject jsObject = jsonFromString(message);
 
     if (!jsObject.keys().contains("action") && (!jsObject.keys().contains("request_id") || !jsObject.keys().contains("cmd")) ) {
@@ -167,7 +167,7 @@ void SocketServer::processMessage(const QString &message)
 
 void SocketServer::binaryProcessMessage(const QByteArray &message)
 {
-    QTextStream(stdout) << "binary process message" << message;
+    qDebug() << "binary process message" << message;
 }
 
 QHostAddress SocketServer::resolveIP() const
