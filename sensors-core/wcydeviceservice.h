@@ -29,7 +29,7 @@ public:
 
 signals:
     void usbScanCompleted();
-    void scanUnCompleted();
+    void bleScanUncompleted();
 
 private:
     void startDeviceScan(CONNECT_TYPE connectType);
