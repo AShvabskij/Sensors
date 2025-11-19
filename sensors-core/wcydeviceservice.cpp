@@ -40,11 +40,11 @@ void WCYDeviceService::startScan()
             });
         }, Qt::SingleShotConnection);
 
-    // connect(this, &WCYDeviceService::bleScanUncompleted, this, [this]() {
-    //         QTimer::singleShot(5000, this, [this]() {
-    //             this->startDeviceScan(CONNECT_TYPE::BLECONNECT);
-    //         });
-    //     }, Qt::SingleShotConnection);
+    connect(this, &WCYDeviceService::bleScanUncompleted, this, [this]() {
+            QTimer::singleShot(3000, this, [this]() {
+                this->startDeviceScan(CONNECT_TYPE::BTHCONNECT);
+            });
+        }, Qt::SingleShotConnection);
 
     _wcyAPI->connectToServer("http://localhost:5001");
 }
@@ -73,6 +73,9 @@ void WCYDeviceService::startDeviceScan(CONNECT_TYPE connectType)
     if (connectType == CONNECT_TYPE::USBCONNECT) {
         _wcyAPI->scanUSB();
     } else if (connectType == CONNECT_TYPE::BLECONNECT){
+        _wcyAPI->scanBLE(2000);
+    }
+    else if (connectType == CONNECT_TYPE::BTHCONNECT){
         _wcyAPI->scanBLE(5000);
     }
 
