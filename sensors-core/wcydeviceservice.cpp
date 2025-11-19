@@ -40,11 +40,11 @@ void WCYDeviceService::startScan()
             });
         }, Qt::SingleShotConnection);
 
-    connect(this, &WCYDeviceService::bleScanUncompleted, this, [this]() {
-            QTimer::singleShot(5000, this, [this]() {
-                this->startDeviceScan(CONNECT_TYPE::BLECONNECT);
-            });
-        }, Qt::SingleShotConnection);
+    // connect(this, &WCYDeviceService::bleScanUncompleted, this, [this]() {
+    //         QTimer::singleShot(5000, this, [this]() {
+    //             this->startDeviceScan(CONNECT_TYPE::BLECONNECT);
+    //         });
+    //     }, Qt::SingleShotConnection);
 
     _wcyAPI->connectToServer("http://localhost:5001");
 }
@@ -287,14 +287,14 @@ void WCYDeviceService::deviceDisconnect(const QString &deviceMac)
 void WCYDeviceService::stopAll()
 {
     for (const auto& dInfo: _devices) {
-        if (dInfo.connectState == StateConnected) {
+        if (dInfo.connectState == StateConnected || dInfo.connectState == StateReady) {
             _wcyAPI->stopSendData(dInfo.deviceMac);
             QTimer::singleShot(1000, this, [this, deviceMac = dInfo.deviceMac]() {
                    _wcyAPI->disconnectDevice(deviceMac);
             });
-        } else if (dInfo.connectState == StateReady) {
+        } /*else if (dInfo.connectState == StateReady) {
             _wcyAPI->disconnectDevice(dInfo.deviceMac);
-        }
+        }*/
 
 //      _wcyAPI->deviceExit(dInfo.deviceMac);
     }

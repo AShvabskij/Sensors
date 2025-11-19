@@ -86,10 +86,10 @@ void Core::init()
     m_startTimer = new QTimer(this);
     m_startTimer->setSingleShot(true);
     QObject::connect(m_startTimer, &QTimer::timeout, [this]() {
-    // executeScript(SCRIPT_ON_START);
         startSensorServer();
+    // executeScript(SCRIPT_ON_START);
     });
-    m_startTimer->start(3000);
+    m_startTimer->start(1000);
 
     _devService = new WCYDeviceService();
 
@@ -190,8 +190,8 @@ void Core::onSystemInit()
     QMutexLocker locker(&m_mutex);
     qInfo() << "Send all devices Info";
 
-    QJsonObject res = generateDevicesUpdate();
-    this->send(res);
+    // QJsonObject res = generateDevicesUpdate();
+    // this->send(res);
 
     _devService->startScan();
 }

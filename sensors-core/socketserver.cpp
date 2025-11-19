@@ -129,16 +129,18 @@ void SocketServer::onNewConnection()
     m_response->registerClient(pSocket); // Possibly not all client types should be registered
 
 
-    QJsonObject jsObject = {
-        {"request_id", 777}, // 777 - own messages
-        {"cmd", QJsonObject{
-                    {"name", "system_init"},
-                    {"type", ""}
-                }},
-        {"body", QJsonObject()}
-    };
+    QTimer::singleShot(1000, this, [this]() {
+        QJsonObject jsObject = {
+            {"request_id", 777}, // 777 - own messages
+            {"cmd", QJsonObject{
+                        {"name", "system_init"},
+                        {"type", ""}
+                    }},
+            {"body", QJsonObject()}
+        };
 
-    m_request->processRequest(jsObject);
+        m_request->processRequest(jsObject);
+    });
 }
 
 void SocketServer::onCloseConnection()

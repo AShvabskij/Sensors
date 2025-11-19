@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.Logging;
 using Grpc.Core;
 using GrpcServer;
@@ -7,6 +7,10 @@ using GrpcServer.Services;
 using GrpcSensorServer;
 using GrpcSensorServer.Services;
 using System.Threading;
+
+using System.Threading.Tasks;
+
+
 
 namespace WCYSensorRPCApi
 {
@@ -21,8 +25,30 @@ namespace WCYSensorRPCApi
 
             try
             {
+
+                //var _sensorService = new WCY.DisLab.SDK.SensorService();
+                //bool initResult = _sensorService.Initialize("en");
+                //Console.WriteLine($"Sensor service initialized: {initResult}");
+
+                //Console.WriteLine("Start BLE scanning...");
+                //var devices = await _sensorService.BLEScan(5000);
+                //// List<DeviceModel> devices = await _sensorService.USBScan();
+
+                //if (devices.Count == 0)
+                //{
+                //    Console.WriteLine("No devices found!");
+                //}
+                //// Continue with your code that uses the devices
+                //foreach (var device in devices)
+                //{
+                //    Console.WriteLine($"Found device: {device.DeviceName}");
+                //}
+
+                //                Thread.Sleep(10000);
+
                 // Create and configure the gRPC service
                 var sensorService = new SensorGrpcService();
+
 
                 var server = new Server
                 {

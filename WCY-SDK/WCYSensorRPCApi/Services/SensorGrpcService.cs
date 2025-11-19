@@ -34,6 +34,7 @@ namespace GrpcSensorServer.Services
 
             _sensorService.SensorDataHandler += OnSensorDataReceived;
             _sensorService.SensorRemovceHandler += OnSensorRemoved;
+
         }
 
         // Simple logging methods
@@ -63,9 +64,6 @@ namespace GrpcSensorServer.Services
         {
             try
             {
-                bool initResult = _sensorService.Initialize("en");
-                Console.WriteLine($"Sensor service initialized: {initResult}");
-
                 LogInfo($"Starting BLE scan with timeout: {request.Timeout}ms");
                 var devices = await _sensorService.BLEScan(request.Timeout);
 
@@ -136,6 +134,9 @@ namespace GrpcSensorServer.Services
                 {
                     _deviceDataMapping.Remove(request.DeviceMac);
                 }
+
+                // Clean up subscriptions
+                CleanupDeviceSubscriptions(request.DeviceMac);
 
                 LogInfo($"Disconnect result for {request.DeviceMac}: {result}");
                 return Task.FromResult(new DisconnectResponse { Success = result });
@@ -350,18 +351,18 @@ namespace GrpcSensorServer.Services
         {
             try
             {
-//              _logger.LogInformation("Exiting device: {DeviceMac}", request.DeviceMac);
+                LogInfo($"Exiting device: {request.DeviceMac}");
                 var result = await _sensorService.DeviceExit(request.DeviceMac);
 
                 // Clean up subscriptions
                 CleanupDeviceSubscriptions(request.DeviceMac);
 
-//              _logger.LogInformation("Device exit result for {DeviceMac}: {Result}", request.DeviceMac, result);
+                LogInfo($"Device exit result for {request.DeviceMac}: {result}");
                 return new DeviceExitResponse { Success = result };
             }
             catch (Exception ex)
             {
-//              _logger.LogError(ex, "Error exiting device {DeviceMac}", request.DeviceMac);
+                LogInfo($"Error exiting device {request.DeviceMac}");
                 return new DeviceExitResponse { Success = false, Error = ex.Message };
             }
         }
