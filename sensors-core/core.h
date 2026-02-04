@@ -21,44 +21,40 @@ public:
     virtual int handle(const QJsonObject &request);
 
     void init();
-    void start();
+    void start(SysType sysType);
     void stop();
 
 signals:
     void stopCompleted();
 
-private slots:
-    void onSystemInit();
-
 private:
-    [[ noreturn ]] void thread_proc();
+//    [[ noreturn ]] void thread_proc();
 
     void handleSystemInit(const QJsonObject& request);
     _return_t executeScript(const QString& script);
 
-    QJsonObject generateDevicesUpdate();
-    QList<QJsonObject> generateData();
+    void registerSensorService(SysType sysType, IDeviceService* service);
+
     QJsonObject convertInfoToDTO(QList<DeviceInfo> dev_list);
-    QJsonObject convertFlowToDTO(DataFlow data);
+    QJsonObject convertDataFlowToDTO(DataFlow data);
 
-    void TestSensorRPC();
-
-    long startSensorServer();
-    long stopSensorServer();
-    bool stopProcessByNameDirect(const QString& processName);
+    QList<SysType> m_supportedSysTypes;
+    QMap<SysType, IDeviceService*> m_services;
 
     SocketServer* m_cmdServer = nullptr;
     SocketServer* m_streamServer = nullptr;
 
     QFuture<void> m_threadFuture;
     QMutex m_mutex;
-    QTimer* m_startTimer;
+    QTimer* m_scanTimer = nullptr;
     bool m_isActivated = false;
 
     QJsonArray m_devices;
 
     QProcess m_process;
+
     IDeviceService* _devService;
+
 };
 
 #endif // CORE_H

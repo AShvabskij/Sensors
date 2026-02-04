@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCYSensorRPCApi", "WCYSenso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp2\ConsoleApp.csproj", "{FB909E03-0276-466C-8D11-C60121877497}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfmSDKSample", "..\..\wcysdk\Example\WfmSDKSample\WfmSDKSample\WfmSDKSample.csproj", "{0214D132-00CF-4379-992C-C61D6FD596BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{FB909E03-0276-466C-8D11-C60121877497}.Release|x64.Build.0 = Release|Any CPU
 		{FB909E03-0276-466C-8D11-C60121877497}.Release|x86.ActiveCfg = Release|Any CPU
 		{FB909E03-0276-466C-8D11-C60121877497}.Release|x86.Build.0 = Release|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Debug|x64.Build.0 = Debug|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Debug|x86.Build.0 = Debug|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Release|x64.ActiveCfg = Release|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Release|x64.Build.0 = Release|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Release|x86.ActiveCfg = Release|Any CPU
+		{0214D132-00CF-4379-992C-C61D6FD596BE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

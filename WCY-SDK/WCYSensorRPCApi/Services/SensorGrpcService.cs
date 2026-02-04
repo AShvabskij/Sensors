@@ -104,7 +104,6 @@ namespace GrpcSensorServer.Services
                 return new USBScanResponse { Error = ex.Message };
             }
         }
-
         public override async Task<ConnectResponse> Connect(ConnectRequest request, ServerCallContext context)
         {
             try
@@ -121,7 +120,6 @@ namespace GrpcSensorServer.Services
                 return new ConnectResponse { Result = ConnectEnum.Exception, Error = ex.Message };
             }
         }
-
         public override Task<DisconnectResponse> Disconnect(DisconnectRequest request, ServerCallContext context)
         {
             try
@@ -163,6 +161,23 @@ namespace GrpcSensorServer.Services
                 response.Ranges.AddRange(ranges.Select(ToGrpcDataTypeModel));
 
                 LogInfo($"Found {ranges.Count} ranges for device {request.DeviceMac}");
+
+                //int frequency = await _sensorService.GteCrrentFrequency(request.DeviceMac);
+                //LogInfo($"Current frequency: {frequency}");
+
+                //if (frequency < 100 || frequency > 200)
+                //{
+                //    var freqs = await _sensorService.GetSupportFrequency(request.DeviceMac);
+                //    var closestFrequency = freqs
+                //        .OrderBy(f => Math.Abs(f.Frequency - 100))
+                //        .First();
+
+                //    LogInfo($"Set supported frequency: {closestFrequency.Frequency}");
+
+                //    await _sensorService.SetFrequency(request.DeviceMac, closestFrequency.Frequency);
+                //}
+
+
                 return response;
             }
             catch (Exception ex)
@@ -185,7 +200,6 @@ namespace GrpcSensorServer.Services
                 {
                     dataTypes.Add(_ranges[id]);
                     _deviceDataMapping[request.DeviceMac].Add(id);
-
                 }
 
                 //                var dataTypes = request.DataTypes.Select(FromGrpcDataTypeModel).ToList();
@@ -461,6 +475,8 @@ namespace GrpcSensorServer.Services
         {
             foreach(string device in _deviceDataMapping.Keys)
             {
+                await _sensorService.StopSendData(device);
+
                 bool res = _sensorService.DisConnect(device);
                 if (res)
                 {

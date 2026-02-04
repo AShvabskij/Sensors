@@ -11,51 +11,65 @@
 #include <QScreen>
 #include "simplewebserver.h"
 
+
+#include <QApplication>
+#include <windows.h>
+
 #include "core.h"
 
-#include "grpc_client.h"
+// int main2(int argc, char *argv[])
+// {
+//     QGuiApplication app(argc, argv);
 
-int main2(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
+// // Enable WebEngine if needed
+// #ifdef QT_WEBENGINE_CORE_LIB
+//     QtWebEngine::initialize();
+// #endif
 
-// Enable WebEngine if needed
-#ifdef QT_WEBENGINE_CORE_LIB
-    QtWebEngine::initialize();
-#endif
-
-    QQmlApplicationEngine engine;
-    QObject::connect(
-        &engine,
-        &QQmlApplicationEngine::objectCreationFailed,
-        &app,
-        []() { QCoreApplication::exit(-1); },
-        Qt::QueuedConnection);
-    engine.loadFromModule("Sensors", "Main");
+//     QQmlApplicationEngine engine;
+//     QObject::connect(
+//         &engine,
+//         &QQmlApplicationEngine::objectCreationFailed,
+//         &app,
+//         []() { QCoreApplication::exit(-1); },
+//         Qt::QueuedConnection);
+//     engine.loadFromModule("Sensors", "Main");
 
 
-    SimpleWebServer webServer;
+//     SimpleWebServer webServer;
 
-    QString webRoot = "./front/build";
-    webServer.setWebRoot(webRoot);
+//     QString webRoot = "./front/build";
+//     webServer.setWebRoot(webRoot);
 
-    // Start the server on port 3000
-    if (!webServer.startServer(3000)) {
-        QMessageBox::critical(nullptr, "Server Error",
-                              "Failed to start SimpleWebServer on port 3000!");
-        return -1;
+//     // Start the server on port 3000
+//     if (!webServer.startServer(3000)) {
+//         QMessageBox::critical(nullptr, "Server Error",
+//                               "Failed to start SimpleWebServer on port 3000!");
+//         return -1;
+//     }
+
+//     Core core;
+//     core.init();
+
+//     return app.exec();
+// }
+
+class COMInitializer {
+public:
+    COMInitializer() {
+        // Инициализируем COM в основном потоке
+        CoInitializeEx(NULL, COINIT_MULTITHREADED);
     }
 
-    Core core;
-    core.init();
-
-    core.start();
-
-    return app.exec();
-}
+    ~COMInitializer() {
+        CoUninitialize();
+    }
+};
 
 int main(int argc, char *argv[])
 {
+    // COMInitializer comInit;
+
     QApplication app(argc, argv);
     Core core;
 
@@ -119,9 +133,7 @@ int main(int argc, char *argv[])
 
     window.show();
 
-
     core.init();
-    core.start();
 
     // app.setQuitLockEnabled(false);
 

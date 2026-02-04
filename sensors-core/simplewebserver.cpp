@@ -1,4 +1,4 @@
-#include "SimpleWebServer.h"
+#include "simplewebserver.h"
 #include <QDir>
 #include <QFile>
 #include <QDateTime>

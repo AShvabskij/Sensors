@@ -136,7 +136,7 @@ StreamManager::StreamManager()
         if (m_clients.isEmpty()) return;
 
         // QJsonDocument doc(data);
-        // QTextStream(stdout) << "Sending data " << doc.toJson(QJsonDocument::Compact) << '\n';
+        // qDebug()  << "Streaming:" << doc.toJson(QJsonDocument::Compact) << '\n';
 
         send(data);
     });
@@ -148,7 +148,7 @@ StreamManager::~StreamManager() {
     m_workerThread->quit();
 //  m_workerThread->wait(); // not allowed in destructor - app freezes when closing
     delete m_worker;
-    QTextStream(stdout) << " Total bytes sended = " << m_totalBytes << "\n";
+    qDebug()  << " Total bytes sended = " << m_totalBytes << "\n";
 }
 
 int StreamManager::stream(const QList<QJsonObject>& valueList) {
@@ -198,7 +198,7 @@ int StreamManager::registerHandler(IReqHandler* handler) {
     QMetaObject::Connection con_send = connect(handler, &IReqHandler::send, this, &StreamManager::send, Qt::QueuedConnection);
 
     if (!con_stream || !con_stop_stream || !con_send) {
-        QTextStream(stdout) << "The stream connection is failed! " << '\n';
+        qWarning()  << "The stream connection is failed! " << '\n';
         return -1;
     }
 
@@ -264,6 +264,8 @@ int StreamManager::send(QJsonObject data)
     //    qDebug() << "Response:" << response;
 
     for (QWebSocket *client : m_clients) {
+//      qDebug() << "Streaming: " << "to address: " << client->peerAddress() << ":" << client->peerPort();
+
         if (needBinary) {
             client->sendBinaryMessage(dataToSend);
         } else {

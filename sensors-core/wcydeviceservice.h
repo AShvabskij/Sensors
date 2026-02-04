@@ -2,65 +2,85 @@
 #define WCYDEVICESERVICE_H
 
 #include <QObject>
-#include <types.h>
+#include <QTimer>
+#include <QMutex>
+#include <QMap>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QFile>
+#include <QDir>
+#include <QCoreApplication>
+#include <QElapsedTimer>
 
-#include "sensor_service_client.grpc.qpb.h"
-
-class WCYServiceWrapper;
+#include "wcy_dislab_wrapper.h"
+#include "types.h"
 
 class WCYDeviceService : public IDeviceService
 {
     Q_OBJECT
+
 public:
-    WCYDeviceService();
-
+    explicit WCYDeviceService();
     virtual ~WCYDeviceService();
-    virtual void startScan();
-    virtual void stopScan() {}
-    virtual void deviceStartStream(const QString& deviceMac);
 
-    virtual void deviceConnect(const QString& deviceMac);
-    virtual void deviceDisconnect(const QString& deviceMac);
-
-    virtual void stopAll();
-    virtual void exit();
-
-    virtual const QList<DeviceInfo> getConnectedDeviceList();
-
-signals:
-    void usbScanCompleted();
-    void bleScanUncompleted();
+    // IDeviceService interface implementation
+    virtual void init() override;
+    virtual void startScan() override;
+    virtual void stopScan() override;
+    virtual void deviceStartStream(const QString& deviceMac) override;
+    virtual void deviceStopStream(const QString& deviceMac) override;
+    virtual void deviceConnect(const QString& deviceMac) override;
+    virtual void deviceDisconnect(const QString& deviceMac) override;
+    virtual void stopAll() override;
+    virtual void exit() override;
+    virtual const QList<DeviceInfo> getConnectedDeviceList() override;
 
 private:
-    void startDeviceScan(CONNECT_TYPE connectType);
+    // Internal methods
+    void startBLEScan();
+    void startHIDScan();
+    void processScannedDevice(const DeviceScan& deviceScan, CONNECT_TYPE connectType);
     void connectNextDevice();
-    void handleConnectionTimeout(const QString &deviceMac);
+    _return_t tryDeviceConnect(DeviceInfo *device);
+    _return_t setPreferedFrequency(const DeviceScan &device, int frequency);
+    void handleConnectionFailed(const QString& deviceMac);
+    void handleConnectionTimeOut(const QString& deviceMac);
+    DeviceInfo* getDeviceByMac(const QString& deviceMac);
+    DeviceInfo* getDeviceByName(const QString& deviceName);
+    _return_t updateDeviceChannels(DeviceInfo* device);
+    bool loadUnitsFromJson();
+    void stopStreamingAll();
 
-private slots:
-    void onDeviceConnected(const QString &deviceMac, GrpcSensor::ConnectEnumGadget::ConnectEnum result);
-    void onSensorRangeReceived(const QString &mac, QList<GrpcSensor::DataTypeModel> ranges);
+    // Conversion helpers
+    DeviceInfo convertToDeviceInfo(const DeviceScan& deviceScan, CONNECT_TYPE connectType);
+    DeviceScan convertToDeviceScan(const DeviceInfo* device) const;
+
+    // Callback handlers
+    void onDeviceScanned(const DeviceScan& deviceScan);
+    void onDataReceived(const WCY_DisLab_Wrapper::RData &data);
+    void onDeviceRemoved(const DeviceScan& deviceScan);
+    void onErrorOccurred(const QString& errorMessage);
 
 private:
-    QList<DeviceInfo> _devices;
-    std::unique_ptr<WCYServiceWrapper> _wcyAPI;
+    WCY_DisLab_Wrapper* m_wrapper;
+    QList<DeviceInfo> m_devices;
+    QSet<QString> m_scannedDevices;
 
-    struct ConnectionHolder {
-        QMetaObject::Connection _serverConnect;
-        QMetaObject::Connection _deviceConnected;
-        QMetaObject::Connection _sensorRangeReceived;
-        QMetaObject::Connection _sensorDataReceived;
-        QMetaObject::Connection _sensorEventReceived;
+//  QMap<QString, QTimer*> m_connectionTimers;
+    QJsonArray m_channelsDescr;
+    QRecursiveMutex m_devicesMutex;
+    bool m_isInitialized;
+    bool m_isScanning;
+    CONNECT_TYPE m_currentScanType;
+    QMap<int/*rangeId*/, DeviceInfo*> m_ranges;
+    QMap<int/*rangeId*/,  int64> m_lastTimestamp;
 
-        void disconnectAll() {
-            QObject::disconnect(_serverConnect);
-            QObject::disconnect(_deviceConnected);
-            QObject::disconnect(_sensorRangeReceived);
-            QObject::disconnect(_sensorDataReceived);
-            QObject::disconnect(_sensorEventReceived);
-        }
-    };
-
-    ConnectionHolder _connections;
+    QElapsedTimer m_timer;
+    struct {
+        bool bleScanCompleted;
+        bool hidScanCompleted;
+    } m_scanStatus;
 };
 
 #endif // WCYDEVICESERVICE_H

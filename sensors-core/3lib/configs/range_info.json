@@ -1,0 +1,1073 @@
+[
+  {
+    "decimalsCount": 0,
+    "id": 110,
+    "unit": "C",
+    "lowerLimit": 0,
+    "upperLimit": 99999
+  },
+  {
+    "decimalsCount": 0,
+    "id": 111,
+    "unit": "C",
+    "lowerLimit": 0,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 2,
+    "id": 120,
+    "unit": "%RH",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 2,
+    "id": 210,
+    "unit": null,
+    "lowerLimit": 0,
+    "upperLimit": 14
+  },
+  {
+    "decimalsCount": 0,
+    "id": 310,
+    "unit": "mV",
+    "lowerLimit": -1000,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 1,
+    "id": 320,
+    "unit": "mV",
+    "lowerLimit": -2000,
+    "upperLimit": 2000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 410,
+    "unit": "μs/cm",
+    "lowerLimit": 0,
+    "upperLimit": 20000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 411,
+    "unit": "μs/cm",
+    "lowerLimit": 0,
+    "upperLimit": 100000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 420,
+    "unit": "μs/cm",
+    "lowerLimit": 0,
+    "upperLimit": 20000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 421,
+    "unit": "μs/cm",
+    "lowerLimit": 0,
+    "upperLimit": 100000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 430,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 55000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 431,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 55000
+  },
+  {
+    "decimalsCount": 1,
+    "id": 500,
+    "unit": "℃",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 1,
+    "id": 510,
+    "unit": "℃",
+    "lowerLimit": -40,
+    "upperLimit": 125
+  },
+  {
+    "decimalsCount": 2,
+    "id": 511,
+    "unit": "℃",
+    "lowerLimit": -50,
+    "upperLimit": 1200
+  },
+  {
+    "decimalsCount": 2,
+    "id": 512,
+    "unit": "℃",
+    "lowerLimit": -40,
+    "upperLimit": 125
+  },
+  {
+    "decimalsCount": 2,
+    "id": 513,
+    "unit": "℃",
+    "lowerLimit": 0,
+    "upperLimit": 65
+  },
+  {
+    "decimalsCount": 1,
+    "id": 514,
+    "unit": "℃",
+    "lowerLimit": 0,
+    "upperLimit": 50
+  },
+  {
+    "decimalsCount": 1,
+    "id": 520,
+    "unit": "℃",
+    "lowerLimit": -20,
+    "upperLimit": 130
+  },
+  {
+    "decimalsCount": 2,
+    "id": 530,
+    "unit": "℃",
+    "lowerLimit": -70,
+    "upperLimit": 380
+  },
+  {
+    "decimalsCount": 2,
+    "id": 540,
+    "unit": "m/s",
+    "lowerLimit": 0,
+    "upperLimit": 4
+  },
+  {
+    "decimalsCount": 1,
+    "id": 550,
+    "unit": "m/s",
+    "lowerLimit": 0.3,
+    "upperLimit": 45
+  },
+  {
+    "decimalsCount": 3,
+    "id": 610,
+    "unit": "N",
+    "lowerLimit": -50,
+    "upperLimit": 50
+  },
+  {
+    "decimalsCount": 2,
+    "id": 611,
+    "unit": "N",
+    "lowerLimit": -10,
+    "upperLimit": 10
+  },
+  {
+    "decimalsCount": 2,
+    "id": 612,
+    "unit": "N",
+    "lowerLimit": -10,
+    "upperLimit": 10
+  },
+  {
+    "decimalsCount": 3,
+    "id": 613,
+    "unit": "N",
+    "lowerLimit": -2,
+    "upperLimit": 2
+  },
+  {
+    "decimalsCount": 1,
+    "id": 614,
+    "unit": "N",
+    "lowerLimit": -1000,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 1,
+    "id": 615,
+    "unit": "N",
+    "lowerLimit": -100,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 3,
+    "id": 616,
+    "unit": "N",
+    "lowerLimit": 0,
+    "upperLimit": 10
+  },
+  {
+    "decimalsCount": 2,
+    "id": 620,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 2,
+    "id": 621,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 2,
+    "id": 622,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 2,
+    "id": 623,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 2,
+    "id": 624,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 2,
+    "id": 625,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 2,
+    "id": 626,
+    "unit": "g",
+    "lowerLimit": -16,
+    "upperLimit": 16
+  },
+  {
+    "decimalsCount": 1,
+    "id": 630,
+    "unit": "°",
+    "lowerLimit": 0,
+    "upperLimit": 360
+  },
+  {
+    "decimalsCount": 1,
+    "id": 640,
+    "unit": "cm",
+    "lowerLimit": 0,
+    "upperLimit": 200
+  },
+  {
+    "decimalsCount": 3,
+    "id": 641,
+    "unit": "m",
+    "lowerLimit": 0.15,
+    "upperLimit": 6
+  },
+  {
+    "decimalsCount": 2,
+    "id": 642,
+    "unit": "mm",
+    "lowerLimit": 0,
+    "upperLimit": 45
+  },
+  {
+    "decimalsCount": 1,
+    "id": 650,
+    "unit": "Lux",
+    "lowerLimit": 0,
+    "upperLimit": 500
+  },
+  {
+    "decimalsCount": 0,
+    "id": 651,
+    "unit": "Lux",
+    "lowerLimit": 0,
+    "upperLimit": 5000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 652,
+    "unit": "Lux",
+    "lowerLimit": 0,
+    "upperLimit": 150000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 660,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 661,
+    "unit": null,
+    "lowerLimit": 0,
+    "upperLimit": 4
+  },
+  {
+    "decimalsCount": 0,
+    "id": 662,
+    "unit": null,
+    "lowerLimit": 0,
+    "upperLimit": 4
+  },
+  {
+    "decimalsCount": 1,
+    "id": 671,
+    "unit": "cm",
+    "lowerLimit": 0,
+    "upperLimit": 150
+  },
+  {
+    "decimalsCount": 1,
+    "id": 672,
+    "unit": "cm",
+    "lowerLimit": 0,
+    "upperLimit": 150
+  },
+  {
+    "decimalsCount": 0,
+    "id": 680,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 3,
+    "id": 690,
+    "unit": "mm",
+    "lowerLimit": 0,
+    "upperLimit": 29.1
+  },
+  {
+    "decimalsCount": 1,
+    "id": 700,
+    "unit": "º",
+    "lowerLimit": -180,
+    "upperLimit": 180
+  },
+  {
+    "decimalsCount": 1,
+    "id": 701,
+    "unit": "º",
+    "lowerLimit": -5,
+    "upperLimit": 95
+  },
+  {
+    "decimalsCount": null,
+    "id": 721,
+    "unit": "rad/s",
+    "lowerLimit": -245,
+    "upperLimit": 245
+  },
+  {
+    "decimalsCount": null,
+    "id": 722,
+    "unit": "rad/s",
+    "lowerLimit": -245,
+    "upperLimit": 245
+  },
+  {
+    "decimalsCount": null,
+    "id": 723,
+    "unit": "rad/s",
+    "lowerLimit": -245,
+    "upperLimit": 245
+  },
+  {
+    "decimalsCount": 2,
+    "id": 724,
+    "unit": "rad/s",
+    "lowerLimit": 0,
+    "upperLimit": 99.99
+  },
+  {
+    "decimalsCount": 4,
+    "id": 731,
+    "unit": "m",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 3,
+    "id": 732,
+    "unit": "m/s",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 3,
+    "id": 733,
+    "unit": "m/s/s",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 2,
+    "id": 741,
+    "unit": "º",
+    "lowerLimit": -1509949.26,
+    "upperLimit": 1509949.26
+  },
+  {
+    "decimalsCount": 2,
+    "id": 751,
+    "unit": "mm",
+    "lowerLimit": -1310.68,
+    "upperLimit": 1310.68
+  },
+  {
+    "decimalsCount": 0,
+    "id": 761,
+    "unit": "um",
+    "lowerLimit": 0,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 762,
+    "unit": "um",
+    "lowerLimit": 0,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 763,
+    "unit": "um",
+    "lowerLimit": 0,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 3,
+    "id": 801,
+    "unit": "V",
+    "lowerLimit": -15,
+    "upperLimit": 15
+  },
+  {
+    "decimalsCount": 3,
+    "id": 802,
+    "unit": "V",
+    "lowerLimit": -3,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 3,
+    "id": 803,
+    "unit": "V",
+    "lowerLimit": -9,
+    "upperLimit": 9
+  },
+  {
+    "decimalsCount": 3,
+    "id": 804,
+    "unit": "V",
+    "lowerLimit": -9,
+    "upperLimit": 9
+  },
+  {
+    "decimalsCount": 2,
+    "id": 810,
+    "unit": "V",
+    "lowerLimit": -25,
+    "upperLimit": 25
+  },
+  {
+    "decimalsCount": 2,
+    "id": 811,
+    "unit": "V",
+    "lowerLimit": -20,
+    "upperLimit": 20
+  },
+  {
+    "decimalsCount": 3,
+    "id": 812,
+    "unit": "V",
+    "lowerLimit": -2,
+    "upperLimit": 2
+  },
+  {
+    "decimalsCount": 1,
+    "id": 820,
+    "unit": "mV",
+    "lowerLimit": -600,
+    "upperLimit": 600
+  },
+  {
+    "decimalsCount": 3,
+    "id": 901,
+    "unit": "A",
+    "lowerLimit": -3,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 3,
+    "id": 902,
+    "unit": "A",
+    "lowerLimit": -0.6,
+    "upperLimit": 0.6
+  },
+  {
+    "decimalsCount": 3,
+    "id": 910,
+    "unit": "A",
+    "lowerLimit": -3,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 3,
+    "id": 911,
+    "unit": "A",
+    "lowerLimit": -2,
+    "upperLimit": 2
+  },
+  {
+    "decimalsCount": 3,
+    "id": 912,
+    "unit": "A",
+    "lowerLimit": -3,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 3,
+    "id": 913,
+    "unit": "A",
+    "lowerLimit": -3,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 3,
+    "id": 914,
+    "unit": "A",
+    "lowerLimit": -3,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 1,
+    "id": 920,
+    "unit": "μA",
+    "lowerLimit": -100,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 1,
+    "id": 921,
+    "unit": "mA",
+    "lowerLimit": -200,
+    "upperLimit": 200
+  },
+  {
+    "decimalsCount": 1,
+    "id": 930,
+    "unit": "nC",
+    "lowerLimit": -220,
+    "upperLimit": 220
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1000,
+    "unit": null,
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1100,
+    "unit": "mT",
+    "lowerLimit": -130,
+    "upperLimit": 130
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1101,
+    "unit": "mT",
+    "lowerLimit": -130,
+    "upperLimit": 130
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1102,
+    "unit": "mT",
+    "lowerLimit": -130,
+    "upperLimit": 130
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1103,
+    "unit": "mT",
+    "lowerLimit": -130,
+    "upperLimit": 130
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1104,
+    "unit": "mT",
+    "lowerLimit": -130,
+    "upperLimit": 130
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1110,
+    "unit": "CPM",
+    "lowerLimit": 0,
+    "upperLimit": 40000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1111,
+    "unit": "C",
+    "lowerLimit": 0,
+    "upperLimit": 99999999
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1200,
+    "unit": "kPa",
+    "lowerLimit": 0,
+    "upperLimit": 700
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1210,
+    "unit": "kPa",
+    "lowerLimit": -50,
+    "upperLimit": 50
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1211,
+    "unit": "kPa",
+    "lowerLimit": -50,
+    "upperLimit": 50
+  },
+  {
+    "decimalsCount": 1,
+    "id": 1220,
+    "unit": "dB",
+    "lowerLimit": 40,
+    "upperLimit": 120
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1230,
+    "unit": null,
+    "lowerLimit": 0,
+    "upperLimit": 4095
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1300,
+    "unit": "Times/min",
+    "lowerLimit": 0,
+    "upperLimit": 200
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1311,
+    "unit": "bpm",
+    "lowerLimit": 0,
+    "upperLimit": 250
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1320,
+    "unit": "mV",
+    "lowerLimit": -5,
+    "upperLimit": 5
+  },
+  {
+    "decimalsCount": 1,
+    "id": 1380,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1390,
+    "unit": "mg/L",
+    "lowerLimit": 0,
+    "upperLimit": 20
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1400,
+    "unit": "mg/L",
+    "lowerLimit": 0,
+    "upperLimit": 500
+  },
+  {
+    "decimalsCount": 3,
+    "id": 1401,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 32
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1402,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 100000
+  },
+  {
+    "decimalsCount": 0,
+    "id": 1410,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1420,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 20
+  },
+  {
+    "decimalsCount": 1,
+    "id": 1430,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 1000
+  },
+  {
+    "decimalsCount": 1,
+    "id": 1440,
+    "unit": "%LEL",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 3,
+    "id": 1450,
+    "unit": "g/L",
+    "lowerLimit": 0,
+    "upperLimit": 20
+  },
+  {
+    "decimalsCount": 3,
+    "id": 1451,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 2.5
+  },
+  {
+    "decimalsCount": 2,
+    "id": 1460,
+    "unit": "ppm",
+    "lowerLimit": 0,
+    "upperLimit": 20
+  },
+  {
+    "decimalsCount": 5,
+    "id": 1500,
+    "unit": "mol/L",
+    "lowerLimit": 0.00005,
+    "upperLimit": 0.1
+  },
+  {
+    "decimalsCount": 5,
+    "id": 1501,
+    "unit": "mol/L",
+    "lowerLimit": 0.00005,
+    "upperLimit": 1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1510,
+    "unit": "mol/L",
+    "lowerLimit": 0.000001,
+    "upperLimit": 0.1
+  },
+  {
+    "decimalsCount": 5,
+    "id": 1511,
+    "unit": "mol/L",
+    "lowerLimit": 0.000001,
+    "upperLimit": 1
+  },
+  {
+    "decimalsCount": 5,
+    "id": 1520,
+    "unit": "mol/L",
+    "lowerLimit": 0.00001,
+    "upperLimit": 0.1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1521,
+    "unit": "mol/L",
+    "lowerLimit": 0.000007,
+    "upperLimit": 1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1530,
+    "unit": "mol/L",
+    "lowerLimit": 0.000005,
+    "upperLimit": 0.1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1531,
+    "unit": "mol/L",
+    "lowerLimit": 0.000007,
+    "upperLimit": 1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1540,
+    "unit": "mol/L",
+    "lowerLimit": 0.000005,
+    "upperLimit": 0.1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1541,
+    "unit": "mol/L",
+    "lowerLimit": 0.000005,
+    "upperLimit": 1
+  },
+  {
+    "decimalsCount": 5,
+    "id": 1550,
+    "unit": "mol/L",
+    "lowerLimit": 0.00001,
+    "upperLimit": 0.1
+  },
+  {
+    "decimalsCount": 6,
+    "id": 1551,
+    "unit": "mol/L",
+    "lowerLimit": 0.000005,
+    "upperLimit": 1
+  },
+  {
+    "decimalsCount": null,
+    "id": 50000,
+    "unit": null,
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": null,
+    "id": 50010,
+    "unit": null,
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": null,
+    "id": 50030,
+    "unit": null,
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 3,
+    "id": 50040,
+    "unit": "Ω",
+    "lowerLimit": 0,
+    "upperLimit": 10000
+  },
+  {
+    "decimalsCount": 2,
+    "id": 140,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 2,
+    "id": 141,
+    "unit": "A",
+    "lowerLimit": 0,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 2,
+    "id": 142,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 2,
+    "id": 143,
+    "unit": "A",
+    "lowerLimit": 0,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 2,
+    "id": 144,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 2,
+    "id": 145,
+    "unit": "A",
+    "lowerLimit": 0,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 2,
+    "id": 146,
+    "unit": "%",
+    "lowerLimit": 0,
+    "upperLimit": 100
+  },
+  {
+    "decimalsCount": 2,
+    "id": 147,
+    "unit": "A",
+    "lowerLimit": 0,
+    "upperLimit": 3
+  },
+  {
+    "decimalsCount": 2,
+    "id": 130,
+    "unit": "NTU",
+    "lowerLimit": 0,
+    "upperLimit": 400
+  },
+  {
+    "decimalsCount": 0,
+    "id": 643,
+    "unit": "mm",
+    "lowerLimit": 0,
+    "upperLimit": 4000
+  },
+  {
+    "decimalsCount": 6,
+    "id": 160,
+    "unit": "s",
+    "lowerLimit": 0,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 170,
+    "unit": "C",
+    "lowerLimit": 0,
+    "upperLimit": 9999
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65536,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65537,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65538,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65539,
+    "unit": null,
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65540,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65541,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65542,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65543,
+    "unit": null,
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65544,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65545,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65546,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65547,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65548,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 0,
+    "id": 65549,
+    "unit": "μs",
+    "lowerLimit": null,
+    "upperLimit": null
+  },
+  {
+    "decimalsCount": 3,
+    "id": 65550,
+    "unit": "m/s",
+    "lowerLimit": null,
+    "upperLimit": null
+  }
+]

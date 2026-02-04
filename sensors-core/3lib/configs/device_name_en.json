@@ -1,0 +1,698 @@
+[
+  {
+    "id": "A50C",
+    "name": "LightIntensity Sensor"
+  },
+  {
+    "id": "A505",
+    "name": "Force Sensor"
+  },
+  {
+    "id": "A53A",
+    "name": "Flight Timer"
+  },
+  {
+    "id": "A511",
+    "name": "Electronic Compass"
+  },
+  {
+    "id": "A501",
+    "name": "Current Sensor"
+  },
+  {
+    "id": "A503",
+    "name": "Voltage Sensor"
+  },
+  {
+    "id": "A561",
+    "name": "Faraday's law of electromagnetic induction experiment1"
+  },
+  {
+    "id": "A507",
+    "name": "Photogate Sensor"
+  },
+  {
+    "id": "A509",
+    "name": "Temperature Sensor"
+  },
+  {
+    "id": "A506",
+    "name": "Displacement Sensor"
+  },
+  {
+    "id": "A514",
+    "name": "SoundIntensity Sensor"
+  },
+  {
+    "id": "A515",
+    "name": "RotaryMotion Sensor"
+  },
+  {
+    "id": "A527",
+    "name": "HighTemperature Sensor"
+  },
+  {
+    "id": "A525",
+    "name": "Turbidity Sensor"
+  },
+  {
+    "id": "A51F",
+    "name": "pH Sensor"
+  },
+  {
+    "id": "A526",
+    "name": "Redox Potential"
+  },
+  {
+    "id": "A522",
+    "name": "DissolvedOxygen Sensor"
+  },
+  {
+    "id": "A523",
+    "name": "CO₂ Gas Sensor"
+  },
+  {
+    "id": "A520",
+    "name": "Conductivity Sensor"
+  },
+  {
+    "id": "A512",
+    "name": "RelativePressure Sensor"
+  },
+  {
+    "id": "A504",
+    "name": "MagneticInduction Sensor"
+  },
+  {
+    "id": "A50D",
+    "name": "Radiation Sensor"
+  },
+  {
+    "id": "A524",
+    "name": "Oxygen Sensor"
+  },
+  {
+    "id": "A519",
+    "name": "Hydrogen Sensor"
+  },
+  {
+    "id": "A518",
+    "name": "FastTemperature Sensor"
+  },
+  {
+    "id": "A502",
+    "name": "MicroCurrent Sensor"
+  },
+  {
+    "id": "A52A",
+    "name": "SulfurDioxide Sensor"
+  },
+  {
+    "id": "A513",
+    "name": "TitrationCounter Sensor"
+  },
+  {
+    "id": "A50B",
+    "name": "Humidity Sensor"
+  },
+  {
+    "id": "A567",
+    "name": "DigitalTrack Sensor"
+  },
+  {
+    "id": "A528",
+    "name": "HeartRate Sensor"
+  },
+  {
+    "id": "A508",
+    "name": "SoundWaves Sensor"
+  },
+  {
+    "id": "A50A",
+    "name": "Pressure Sensor"
+  },
+  {
+    "id": "A50E",
+    "name": "MicroVoltage Sensor"
+  },
+  {
+    "id": "A50F",
+    "name": "SurfaceHumidity Sensor"
+  },
+  {
+    "id": "A510",
+    "name": "LongDistance Sensor"
+  },
+  {
+    "id": "A51A",
+    "name": "Alcohol Sensor"
+  },
+  {
+    "id": "A51B",
+    "name": "Oscilloscope Sensor"
+  },
+  {
+    "id": "A52B",
+    "name": "RespiratoryRate Sensor"
+  },
+  {
+    "id": "A52C",
+    "name": "DissolvedCarbonDioxide Sensor"
+  },
+  {
+    "id": "A52D",
+    "name": "SignalGenerator Sensor"
+  },
+  {
+    "id": "A52F",
+    "name": "CNC Switch Sensor"
+  },
+  {
+    "id": "A530",
+    "name": "CNC Power Resistor Sensor"
+  },
+  {
+    "id": "A531",
+    "name": "MicroForce Sensor"
+  },
+  {
+    "id": "A532",
+    "name": "Acceleration Sensor"
+  },
+  {
+    "id": "A535",
+    "name": "Colorimeter"
+  },
+  {
+    "id": "A538",
+    "name": "Compass Sensor"
+  },
+  {
+    "id": "A53C",
+    "name": "LungEnlargement Sensor"
+  },
+  {
+    "id": "A53D",
+    "name": "SoilMoisture Sensor"
+  },
+  {
+    "id": "A549",
+    "name": "LightIntensityDistribution Sensor"
+  },
+  {
+    "id": "A55A",
+    "name": "InfraredTemperature Sensor"
+  },
+  {
+    "id": "A589",
+    "name": "HydrogenSulfide Sensor"
+  },
+  {
+    "id": "A58A",
+    "name": "CarbonMonoxide Sensor"
+  },
+  {
+    "id": "A58B",
+    "name": "Chlorine Sensor"
+  },
+  {
+    "id": "A58C",
+    "name": "Chloride Sensor"
+  },
+  {
+    "id": "A58D",
+    "name": "SodiumIon Sensor"
+  },
+  {
+    "id": "A58E",
+    "name": "NitrateIon Sensor"
+  },
+  {
+    "id": "A59B",
+    "name": "NitricOxide Sensor"
+  },
+  {
+    "id": "A59C",
+    "name": "Oxygen Sensor"
+  },
+  {
+    "id": "A59F",
+    "name": "MechanicalEnergyConservation Sensor"
+  },
+  {
+    "id": "A5A0",
+    "name": "Sound Sensor"
+  },
+  {
+    "id": "A5A2",
+    "name": "Frequency Sensor"
+  },
+  {
+    "id": "A5A5",
+    "name": "WaterFlowRate Sensor"
+  },
+  {
+    "id": "A5A6",
+    "name": "NitrogenDioxide Sensor"
+  },
+  {
+    "id": "A5A7",
+    "name": "Ammonia Sensor"
+  },
+  {
+    "id": "A5E1",
+    "name": "PM2.5 Sensor"
+  },
+  {
+    "id": "A56B",
+    "name": "CentripetalForce Sensor"
+  },
+  {
+    "id": "A516",
+    "name": "CNC Switch Sensor"
+  },
+  {
+    "id": "A55D",
+    "name": "Faraday's law of electromagnetic induction experiment1"
+  },
+  {
+    "id": "A5C9",
+    "name": "ECG Sensor"
+  },
+  {
+    "id": "A541",
+    "name": "Charge Sensor"
+  },
+  {
+    "id": "A569",
+    "name": "ForceDip Sensor"
+  },
+  {
+    "id": "A54E",
+    "name": "Two-dimensional sensor"
+  },
+  {
+    "id": "A5CD",
+    "name": "Angle Sensor"
+  },
+  {
+    "id": "A5B4",
+    "name": "Photosynthesis Sensor"
+  },
+  {
+    "id": "A5A9",
+    "name": "Ammonium ion Sensor"
+  },
+  {
+    "id": "A565",
+    "name": "Temperature Sensor"
+  },
+  {
+    "id": "A008",
+    "name": "Acoustic wave sensor"
+  },
+  {
+    "id": "A542",
+    "name": "Multi-range current sensor"
+  },
+  {
+    "id": "A543",
+    "name": "Multi-range voltage sensor"
+  },
+  {
+    "id": "A55E",
+    "name": "Pressure Sensor"
+  },
+  {
+    "id": "A536",
+    "name": "Chroma Sensor"
+  },
+  {
+    "id": "A529",
+    "name": "Dissolved oxygen oxygen sensor"
+  },
+  {
+    "id": "053",
+    "name": "Colorimeter"
+  },
+  {
+    "id": "052",
+    "name": "Turbidity Sensor"
+  },
+  {
+    "id": "091",
+    "name": "Resolution of Force on Slope"
+  },
+  {
+    "id": "038",
+    "name": "Redox Potential"
+  },
+  {
+    "id": "031",
+    "name": "pH Sensor"
+  },
+  {
+    "id": "003",
+    "name": "Voltage Sensor"
+  },
+  {
+    "id": "001",
+    "name": "Current Sensor"
+  },
+  {
+    "id": "044",
+    "name": "Dissolved CO2"
+  },
+  {
+    "id": "019",
+    "name": "Neutralizing titration apparatus"
+  },
+  {
+    "id": "018",
+    "name": "Relative Pressure Sensor"
+  },
+  {
+    "id": "010",
+    "name": "Pressure Sensor"
+  },
+  {
+    "id": "043",
+    "name": "Respiratory Rate Sensor"
+  },
+  {
+    "id": "004",
+    "name": "Magnetic Field Sensor"
+  },
+  {
+    "id": "361",
+    "name": "Sluice valve"
+  },
+  {
+    "id": "362",
+    "name": "Bulb"
+  },
+  {
+    "id": "363",
+    "name": "Battery"
+  },
+  {
+    "id": "364",
+    "name": "Voltage"
+  },
+  {
+    "id": "365",
+    "name": "Current"
+  },
+  {
+    "id": "140",
+    "name": "Chloride Ion Sensor"
+  },
+  {
+    "id": "311",
+    "name": "Chloride Ion Sensor"
+  },
+  {
+    "id": "141",
+    "name": "Sodium Ion Sensor"
+  },
+  {
+    "id": "312",
+    "name": "Sodium Ion Sensor"
+  },
+  {
+    "id": "142",
+    "name": "Nitrate Ion Sensor"
+  },
+  {
+    "id": "313",
+    "name": "Nitrate Ion Sensor"
+  },
+  {
+    "id": "168",
+    "name": "Potassium Ion Sensor"
+  },
+  {
+    "id": "314",
+    "name": "Potassium Ion Sensor"
+  },
+  {
+    "id": "169",
+    "name": "Ammonium Ion Sensor"
+  },
+  {
+    "id": "315",
+    "name": "Ammonium Ion Sensor"
+  },
+  {
+    "id": "171",
+    "name": "Calcium Ion Sensor"
+  },
+  {
+    "id": "316",
+    "name": "Calcium Ion Sensor"
+  },
+  {
+    "id": "039",
+    "name": "High Temperature Sensor"
+  },
+  {
+    "id": "005",
+    "name": "Force Sensor"
+  },
+  {
+    "id": "304",
+    "name": "3-Axis Mag Sensor"
+  },
+  {
+    "id": "012",
+    "name": "Light Sensor"
+  },
+  {
+    "id": "094",
+    "name": "Pressure Sensor"
+  },
+  {
+    "id": "040",
+    "name": "Heart Rate Sensor"
+  },
+  {
+    "id": "007",
+    "name": "Photogate"
+  },
+  {
+    "id": "072",
+    "name": "Photogate"
+  },
+  {
+    "id": "021",
+    "name": "Rotary Motion Sensor"
+  },
+  {
+    "id": "025",
+    "name": "H2 Sensor"
+  },
+  {
+    "id": "026",
+    "name": "Ethanol Sensor"
+  },
+  {
+    "id": "032",
+    "name": "Conductivity"
+  },
+  {
+    "id": "042",
+    "name": "SO2 Sensor"
+  },
+  {
+    "id": "050",
+    "name": "Acc 3-Axis Sensor"
+  },
+  {
+    "id": "049",
+    "name": "Micro Force Sensor"
+  },
+  {
+    "id": "106",
+    "name": "Force/Angle Sensor"
+  },
+  {
+    "id": "035",
+    "name": "CO2 Sensor"
+  },
+  {
+    "id": "006",
+    "name": "Displacement Sensor"
+  },
+  {
+    "id": "016",
+    "name": "Long Distance Displacement Sensor"
+  },
+  {
+    "id": "203",
+    "name": "CH4 Sensor"
+  },
+  {
+    "id": "138",
+    "name": "CO Sensor"
+  },
+  {
+    "id": "017",
+    "name": "Electronic Compass"
+  },
+  {
+    "id": "381",
+    "name": "Pry Sensor"
+  },
+  {
+    "id": "300",
+    "name": "Actuator"
+  },
+  {
+    "id": "041",
+    "name": "DO/O2 Sensor"
+  },
+  {
+    "id": "307",
+    "name": "Wind Speed Sensor"
+  },
+  {
+    "id": "034",
+    "name": "Dissolved Oxygen Sensor"
+  },
+  {
+    "id": "065",
+    "name": "Charge Sensor"
+  },
+  {
+    "id": "165",
+    "name": "Flow Rate Sensor"
+  },
+  {
+    "id": "103",
+    "name": "Track Sensor"
+  },
+  {
+    "id": "048",
+    "name": "Digital Potentiometer"
+  },
+  {
+    "id": "015",
+    "name": "Surface Temperature Sensor"
+  },
+  {
+    "id": "002",
+    "name": "Micro-current Sensor"
+  },
+  {
+    "id": "014",
+    "name": "Micro-voltage Sensor"
+  },
+  {
+    "id": "066",
+    "name": "Multi-range Current Sensor"
+  },
+  {
+    "id": "067",
+    "name": "Multi-range Voltage Sensor"
+  },
+  {
+    "id": "306",
+    "name": "Smart Cart"
+  },
+  {
+    "id": "074",
+    "name": "4A Sensor"
+  },
+  {
+    "id": "366",
+    "name": "Slide Rheostat"
+  },
+  {
+    "id": "024",
+    "name": "Fast Response Temperature Sensor"
+  },
+  {
+    "id": "325",
+    "name": "Salinity Sensor"
+  },
+  {
+    "id": "201",
+    "name": "EKG"
+  },
+  {
+    "id": "112",
+    "name": "Light Diffraction Scanner"
+  },
+  {
+    "id": "058",
+    "name": "Flight Timing"
+  },
+  {
+    "id": "166",
+    "name": "NO2 Sensor"
+  },
+  {
+    "id": "009",
+    "name": "Temperature"
+  },
+  {
+    "id": "600",
+    "name": "Centripetal Force Sensor"
+  },
+  {
+    "id": "090",
+    "name": "Infrared Thermometer Sensor"
+  },
+  {
+    "id": "013",
+    "name": "Geiger Muller Sensor"
+  },
+  {
+    "id": "305",
+    "name": "Differential Pressure Sensor"
+  },
+  {
+    "id": "020",
+    "name": "Sound Level Sensor"
+  },
+  {
+    "id": "011",
+    "name": "Relative Humidity Sensor"
+  },
+  {
+    "id": "036",
+    "name": "O2 Sensor"
+  },
+  {
+    "id": "078",
+    "name": "2D Motion"
+  },
+  {
+    "id": "326",
+    "name": "Conductivity Sensor"
+  },
+  {
+    "id": "046",
+    "name": "Motion Sensor"
+  },
+  {
+    "id": "616",
+    "name": "Metallic Expansion and Contraction Sensor"
+  },
+  {
+    "id": "190",
+    "name": "Neutralizing titration apparatus"
+  },
+  {
+    "id": "008",
+    "name": "Sound Wave Sensor"
+  },
+  {
+    "id": "070",
+    "name": "Drop Counter"
+  },
+  {
+    "id": "071",
+    "name": "Flight timer"
+  }
+]

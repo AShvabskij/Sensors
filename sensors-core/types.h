@@ -44,6 +44,38 @@ enum CONNECT_TYPE{
     BTHCONNECT
 };
 
+enum SysType
+{
+    SysType_Undefined = 0,
+    Default = 0,
+    DEMO = 1,
+    WCY = 2,
+    SysType_Unknown
+};
+
+namespace SYS_TYPES {
+inline const char* sysTypeToString(SysType type) {
+    switch (type) {
+    case DEMO: return "DEMO"; // only for demo mode
+    case WCY: return "WCY";
+    case SysType_Unknown: return "Unknown";
+    default: return "";
+    }
+
+    return "";
+}
+
+inline SysType sysTypeFromString(const char* type) {
+    if (type == nullptr) {
+        return SysType_Undefined;
+    }
+
+    if (strcmp(type, "DEMO") == 0) return DEMO;
+    if (strcmp(type, "WCY") == 0) return WCY;
+    return SysType_Unknown;
+}
+}
+
 constexpr const char* ConnectTypeToString(CONNECT_TYPE type) {
     switch(type) {
     case UNKNOWN:    return "UNKNOWN";
@@ -56,11 +88,13 @@ constexpr const char* ConnectTypeToString(CONNECT_TYPE type) {
 }
 
 enum CONNECT_STATE{
-    StateDisconnected = 0,
+    StateUnknown = 0,
+    StateScanned,
     StateConnecting,
-    StateReady,
     StateConnected,
-    StateStopped
+    StateDisconnected,
+    StateStarted,
+    StateRemoved
 };
 
 struct ChannelInfo {
@@ -88,7 +122,8 @@ typedef struct DeviceInfo {
     QString displayType = ""; // name to be displayed
 
     CONNECT_TYPE connectType = CONNECT_TYPE::UNKNOWN;
-    CONNECT_STATE connectState = CONNECT_STATE::StateDisconnected;
+    CONNECT_STATE connectState = CONNECT_STATE::StateUnknown;
+    int frequency = 0; // current frequency to receive data
     ChannelInfo channels[MAX_CHANNELS];
 
     DeviceInfo() = default;
@@ -101,7 +136,8 @@ typedef struct DeviceInfo {
         deviceType(dInfo.deviceType),
         displayType(dInfo.displayType),
         connectType(dInfo.connectType),
-        connectState(dInfo.connectState)
+        connectState(dInfo.connectState),
+        frequency(dInfo.frequency)
     {
         for (int i = 0; i < MAX_CHANNELS; i++) {
             channels[i] = dInfo.channels[i];
@@ -118,6 +154,7 @@ typedef struct DeviceInfo {
             displayType = dInfo.displayType;
             connectType = dInfo.connectType;
             connectState = dInfo.connectState;
+            frequency = dInfo.frequency;
 
             for (int i = 0; i < MAX_CHANNELS; i++) {
                 channels[i] = dInfo.channels[i];
@@ -140,9 +177,12 @@ class IDeviceService : public QObject
     Q_OBJECT
 public:
     virtual ~IDeviceService() {}
+    virtual void init() = 0;
+
     virtual void startScan() = 0;
     virtual void stopScan() = 0;
     virtual void deviceStartStream(const QString& deviceMac) = 0;
+    virtual void deviceStopStream(const QString& deviceMac) = 0;
 
     virtual void deviceConnect(const QString& deviceMac) = 0;
     virtual void deviceDisconnect(const QString& deviceMac) = 0;
@@ -156,6 +196,7 @@ public:
     Q_SIGNAL void  updatedeviceStatus(IDeviceService* source, const DeviceInfo& deviceInfo);
     Q_SIGNAL void dataRecieve(DataFlow data);
     Q_SIGNAL void scanFinished(IDeviceService* source);
+
 };
 
 #endif // TYPES_H

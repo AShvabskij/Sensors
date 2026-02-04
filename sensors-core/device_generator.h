@@ -6,23 +6,27 @@
 
 class DeviceGenerator {
 public:
-    static QJsonObject generateSensor(const QString& address,
+    static QJsonObject createSensor(const QString& address,
                                       const QString& type,
                                       const QString& id,
                                       const QString& name,
                                       const QString& displayType,
+                                      const QString& connType,
                                       bool connected,
-                                      const QJsonArray& channels) {
+                                      const QJsonArray& channels,
+                                      int frequency = 0) {
         QJsonObject sensor;
         sensor["address"] = address;
         sensor["type"] = type;
         sensor["id"] = id;
         sensor["name"] = name;
         sensor["displayType"] = displayType;
+        sensor["connectionType"] = connType;
         sensor["connected"] = connected;
         sensor["process"] = false;
         sensor["lastFoundTimestamp"] = QDateTime::currentDateTime().toString(Qt::ISODateWithMs);
         sensor["channels"] = channels;
+        sensor["frequency"] = frequency;
         return sensor;
     }
 
@@ -39,9 +43,6 @@ public:
 
     // Генерация синусоидальных данных для датчика
     static QJsonObject generateSensorData(const QString& address, const QJsonArray& channels) {
-        QJsonObject root;
-        root["type"] = "sensor_data";
-
         QJsonObject dataObj;
         dataObj["address"] = address;
 
@@ -66,9 +67,8 @@ public:
         }
 
         dataObj["data"] = sensorData;
-        root["data"] = dataObj;
 
-        return root;
+        return dataObj;
     }
 
 private:

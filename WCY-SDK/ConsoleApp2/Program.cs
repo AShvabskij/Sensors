@@ -19,6 +19,7 @@ namespace ConsoleApp2
         static async Task Main(string[] args)
         {
             _sensorService.Initialize("en");
+
             Console.WriteLine("Start USB scanning...");
             List<DeviceModel> usbDevices = await _sensorService.USBScan();
             await proccessDevices(usbDevices);
@@ -36,13 +37,7 @@ namespace ConsoleApp2
             if (devices.Count == 0)
             {
                 Console.WriteLine("No devices found!");
-                ConnectEnum result = await _sensorService.ConnectAsync("00D478BC"); 
-                if (result == ConnectEnum.Successful)
-                {
-                    Console.WriteLine("Successful");
-                }
-
-                    
+                return;
             }
             // Continue with your code that uses the devices
             foreach (var device in devices)
@@ -57,15 +52,12 @@ namespace ConsoleApp2
                     var ranges = await _sensorService.GetSensorRange(device.DeviceMac);
 
                     Console.WriteLine($"Found {ranges.Count} ranges for device {device.DeviceMac}");
-
-
-                    //                    _sensorService.DisConnect(device.DeviceMac);
+                    _sensorService.DisConnect(device.DeviceMac);
                 }
                 else
                 {
                     Console.WriteLine("Failed");
                 }
-
             }
 
         }

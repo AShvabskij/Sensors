@@ -306,7 +306,7 @@ void WCYServiceWrapper::startSendData(const QString &deviceMac, const QList<int3
         request.setDeviceMac(deviceMac);
         request.setRangeIdList(rangeIdList_proto);
 
-        auto reply = m_client->StartSendData(request, QGrpcCallOptions{}.setDeadlineTimeout(10s));
+        auto reply = m_client->StartSendData(request, QGrpcCallOptions{}.setDeadlineTimeout(15s));
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,
@@ -340,7 +340,7 @@ void WCYServiceWrapper::stopSendData(const QString &deviceMac)
         StopSendDataRequest request;
         request.setDeviceMac(deviceMac);
 
-        auto reply = m_client->StopSendData(request, QGrpcCallOptions{}.setDeadlineTimeout(10s));
+        auto reply = m_client->StopSendData(request, QGrpcCallOptions{}.setDeadlineTimeout(15s));
         const auto *replyPtr = reply.get();
 
         connect(replyPtr, &QGrpcCallReply::finished, this,

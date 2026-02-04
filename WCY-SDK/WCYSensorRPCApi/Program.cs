@@ -18,38 +18,17 @@ namespace WCYSensorRPCApi
     {
         const int Port = 5001;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("=== Sensor Service gRPC Server ===");
             Console.WriteLine("Starting server...");
+//          await testDevices();
 
             try
             {
-
-                //var _sensorService = new WCY.DisLab.SDK.SensorService();
-                //bool initResult = _sensorService.Initialize("en");
-                //Console.WriteLine($"Sensor service initialized: {initResult}");
-
-                //Console.WriteLine("Start BLE scanning...");
-                //var devices = await _sensorService.BLEScan(5000);
-                //// List<DeviceModel> devices = await _sensorService.USBScan();
-
-                //if (devices.Count == 0)
-                //{
-                //    Console.WriteLine("No devices found!");
-                //}
-                //// Continue with your code that uses the devices
-                //foreach (var device in devices)
-                //{
-                //    Console.WriteLine($"Found device: {device.DeviceName}");
-                //}
-
                 //                Thread.Sleep(10000);
-
                 // Create and configure the gRPC service
                 var sensorService = new SensorGrpcService();
-
-
                 var server = new Server
                 {
                     Services = { 
@@ -85,6 +64,26 @@ namespace WCYSensorRPCApi
             }
         }
 
+        static async Task testDevices()
+        {
+            var _sensorService = new WCY.DisLab.SDK.SensorService();
+            bool initResult = _sensorService.Initialize("en");
+            Console.WriteLine($"Sensor service initialized: {initResult}");
+
+            Console.WriteLine("Start BLE scanning...");
+            var devices = await _sensorService.BLEScan(1000);
+            // List<DeviceModel> devices = await _sensorService.USBScan();
+
+            if (devices.Count == 0)
+            {
+                Console.WriteLine("No devices found!");
+            }
+            // Continue with your code that uses the devices
+            foreach (var device in devices)
+            {
+                Console.WriteLine($"Found device: {device.DeviceName}");
+            }
+        }
         static void Main2(string[] args)
         {
             // Временно закомментируйте запуск сервера
