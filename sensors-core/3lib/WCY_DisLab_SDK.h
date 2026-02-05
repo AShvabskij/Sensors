@@ -1,7 +1,7 @@
 #ifndef WCY_DISLAB_SDK_H
 #define WCY_DISLAB_SDK_H
 
-// ¿çÆ½Ì¨µ¼³öºê
+// è·¨å¹³å°å¯¼å‡ºå®
 #ifdef _WIN32
 #define DISLAB_SDK __declspec(dllexport)
 #else
@@ -14,13 +14,13 @@ extern "C"
 #endif
 
 	/// <summary>
-	/// Éè±¸É¨Ãè¶ÔÏó 1.BLE 2.HID
+	/// è®¾å¤‡æ‰«æå¯¹è±¡ 1.BLE 2.HID
 	/// </summary>
 	typedef struct DeviceScan
 	{
-		char deviceName[128];//Éè±¸Ãû³Æ
-		char macAddress[18];//macµØÖ·
-		int deviceType;//Éè±¸ÀàĞÍ1.BLE 2.HID
+		char deviceName[128];//è®¾å¤‡åç§°
+		char macAddress[18];//macåœ°å€
+		int deviceType;//è®¾å¤‡ç±»å‹1.BLE 2.HID
 	};
 	typedef struct ComboFetcher
 	{
@@ -49,70 +49,70 @@ extern "C"
 		int frequency;
 	};
 
-	//³õÊ¼»¯
+	//åˆå§‹åŒ–
 	DISLAB_SDK bool Initialize();
 
-	//ÉèÖÃÉ¨Ãè»Øµ÷
+	//è®¾ç½®æ‰«æå›è°ƒ
 	typedef void(*DEVICE_SCAN_CALLBACK)(const DeviceScan* deviceScan);
 	DISLAB_SDK void SetDeviceScan(DEVICE_SCAN_CALLBACK scanCalllback);
 
-	//À¶ÑÀÉ¨Ãè
+	//è“ç‰™æ‰«æ
 	DISLAB_SDK void BLEScan(int timeout_seconds);
 
-	//HIDÉ¨Ãè
+	//HIDæ‰«æ
 	DISLAB_SDK int HIDScan(DeviceScan** devices,int* outCount);
 
-	//ÉèÖÃÊı¾İ»Øµ÷
+	//è®¾ç½®æ•°æ®å›è°ƒ
 	typedef void(*DATA_CALLBACK)(const DataCallback* dataCallback);
 	DISLAB_SDK void SetDataCallback(DATA_CALLBACK dataCallback);
 
-	//ÉèÖÃÉè±¸ÒÆ³ı»Øµ÷
+	//è®¾ç½®è®¾å¤‡ç§»é™¤å›è°ƒ
 	typedef void(*DEVICE_REMOVED_CALLBACK)(const DeviceScan& deviceScan);
 	DISLAB_SDK void SetDeviceRemovedCallback(DEVICE_REMOVED_CALLBACK deviceRemovedCallback);
 
-	//Á¬½Ó
+	//è¿æ¥
 	DISLAB_SDK bool Connect(const DeviceScan* deviceScan);
 
-	//¶Ï¿ªÁ¬½Ó
+	//æ–­å¼€è¿æ¥
 	DISLAB_SDK void DisConnect(const DeviceScan* deviceScan);
 
-	//¿ªÊ¼
+	//å¼€å§‹
 	DISLAB_SDK void Start(const DeviceScan* deviceScan);
 
-	//Í£Ö¹
+	//åœæ­¢
 	DISLAB_SDK void Stop(const DeviceScan* deviceScan);
 
-	//»ñÈ¡Êä³öÖµ×éºÏ
+	//è·å–è¾“å‡ºå€¼ç»„åˆ
 	DISLAB_SDK int GetDataTypes(const DeviceScan* deviceScan, ComboFetcher** comboFetchers, int* outCount);
 	DISLAB_SDK void FreeDataTypes(ComboFetcher* array);
 
-	//ÉèÖÃ´«¸ĞÆ÷ÓïÑÔ
+	//è®¾ç½®ä¼ æ„Ÿå™¨è¯­è¨€
 	DISLAB_SDK bool SetSensorLang(const DeviceScan* deviceScan, int langeType);
 
-	//»ñÈ¡¿ÉÇĞ»»Á¿³Ì
+	//è·å–å¯åˆ‡æ¢é‡ç¨‹
 	DISLAB_SDK int GetSwitchRanges(const DeviceScan* deviceScan, SwitchRange** ranges, int* outCount);
 	DISLAB_SDK void FreeSwitchRanges(SwitchRange* array);
 
-	//ÇĞ»»Á¿³Ì
+	//åˆ‡æ¢é‡ç¨‹
 	DISLAB_SDK bool SetSwitchRange(const DeviceScan* deviceScan, int rangeId);
 
-	//»ñÈ¡²ÉÑùÆµÂÊ
+	//è·å–é‡‡æ ·é¢‘ç‡
 	DISLAB_SDK int GetFrequency(const DeviceScan* deviceScan);
 
-	//»ñÈ¡Éè±¸Ö§³ÖµÄ²ÉÑùÆµÂÊ
+	//è·å–è®¾å¤‡æ”¯æŒçš„é‡‡æ ·é¢‘ç‡
 	DISLAB_SDK int GetSupportFrequency(const DeviceScan* deviceScan, Frequency** frequency, int* outCount);
 	DISLAB_SDK void FreeSupportFrequency(Frequency* array);
 
-	//ÉèÖÃ²ÉÑùÆµÂÊ
+	//è®¾ç½®é‡‡æ ·é¢‘ç‡
 	DISLAB_SDK bool SetFrequency(const DeviceScan* deviceScan, int frequency);
 
-	//µ÷Áã
+	//è°ƒé›¶
 	DISLAB_SDK bool ClearZero(const DeviceScan* deviceScan);
 
-	//ÍË³ö
+	//é€€å‡º
 	DISLAB_SDK void Shutdown(const DeviceScan* deviceScan);
 
-	//ÊÍ·Å×ÊÔ´
+	//é‡Šæ”¾èµ„æº
 	DISLAB_SDK void Dispose();
 
 

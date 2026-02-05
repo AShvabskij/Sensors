@@ -28,18 +28,6 @@ endif()
 # Обязательные компоненты Qt для всех платформ
 find_package(Qt6 REQUIRED COMPONENTS Core HttpServer WebSockets Widgets WebEngineWidgets Concurrent Network)
 
-# Protobuf и Grpc только для Windows
-if(WIN32)
-    find_package(Qt6 REQUIRED COMPONENTS
-        Protobuf
-        Grpc
-        ProtobufTools
-    )
-    message(STATUS "Enabling Protobuf and gRPC for Windows")
-else()
-    message(STATUS "Skipping Protobuf and gRPC for non-Windows platform")
-endif()
-
 qt_standard_project_setup(REQUIRES 6.5)
 
 # Настройка пути к библиотеке WCY_DisLab_SDK (только для Windows)
@@ -97,19 +85,6 @@ set(COMMON_SOURCES
     wcydeviceservice.cpp
 )
 
-# Файлы только для Windows
-#if(WIN32)
-#    set(WINDOWS_SOURCES
-#        wcygrpcdeviceservice.h
-#        wcygrpcdeviceservice.cpp
-#        wcygrpcwrapper.h
-#        wcygrpcwrapper.cpp
-#        grpc_client.h
-#        grpc_client.cpp
-#    )
-#    list(APPEND COMMON_SOURCES ${WINDOWS_SOURCES})
-#endif()
-
 qt_add_executable(appSensors ${COMMON_SOURCES})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_definitions(-DQT_NO_DEBUG_OUTPUT -DQT_NO_WARNING_OUTPUT)
@@ -143,18 +118,6 @@ elseif(WIN32)
     set_target_properties(appSensors PROPERTIES
         WIN32_EXECUTABLE TRUE
     )
-
-    # Добавление protobuf поддержки (только для Windows)
-    qt_add_protobuf(appSensors
-        PROTO_FILES greet.proto sensor_service.proto
-    )
-
-    # Добавление gRPC клиента (только для Windows)
-    qt_add_grpc(appSensors CLIENT
-        PROTO_FILES
-            greet.proto
-            sensor_service.proto
-    )
 endif()
 
 # Библиотеки для всех платформ
@@ -167,15 +130,6 @@ target_link_libraries(appSensors
         Qt6::WebEngineWidgets
         Qt6::Concurrent
 )
-
-# Дополнительные библиотеки для Windows (Protobuf и Grpc)
-if(WIN32)
-    target_link_libraries(appSensors
-        PRIVATE
-            Qt6::Protobuf
-            Qt6::Grpc
-    )
-endif()
 
 # Библиотека WCY_DisLab_SDK (только для Windows если найдена)
 if(WIN32 AND WCY_SDK_AVAILABLE)
