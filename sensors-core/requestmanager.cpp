@@ -25,6 +25,9 @@ int RequestManager::processClose()
             handler->handleClose();
     }
 
+    m_handlerList.clear();
+
+    qDebug() << "request manager is cleared";
     return 0;
 }
 
@@ -32,6 +35,7 @@ int RequestManager::remove(IReqHandler* handler)
 {
     Q_ASSERT(handler);
     if (!handler) return -1;
+    if (!m_handlerList.contains(handler)) return -1;
 
     handler->handleClose();
     m_handlerList.removeAll(handler);
@@ -72,6 +76,7 @@ void RequestManager::start()
 
 void RequestManager::stop()
 {
+    processClose();
 //    if (workerThread.isRunning()) {
 //        workerThread.exit(0);
 //    }

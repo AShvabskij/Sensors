@@ -13,7 +13,6 @@
 
 
 #include <QApplication>
-#include <windows.h>
 
 #include "core.h"
 
@@ -53,18 +52,6 @@
 
 //     return app.exec();
 // }
-
-class COMInitializer {
-public:
-    COMInitializer() {
-        // Инициализируем COM в основном потоке
-        CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    }
-
-    ~COMInitializer() {
-        CoUninitialize();
-    }
-};
 
 int main(int argc, char *argv[])
 {
@@ -116,7 +103,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&webServer, &SimpleWebServer::serverStopped,
                      []() {
-                         qDebug() << "Server stopped";
+                         qDebug() << "Web server stopped";
                      });
 
     // Get the available screen geometry
@@ -130,19 +117,19 @@ int main(int argc, char *argv[])
     // Resize and center the window
     window.resize(width, height);
     window.move(screenGeometry.center() - window.rect().center());
-
+    window.setWindowTitle("Лаборатория измерительных устройств");
     window.show();
 
     core.init();
 
-    // app.setQuitLockEnabled(false);
+    // app.setQuitLockEnabled(true);
 
     QEventLoop localLoop;
     QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
 
         QObject::connect(&core, &Core::stopCompleted, &localLoop, [&localLoop, &app]() {
             localLoop.quit();
-
+            app.exit(); // todo: find out later why it freezes when exiting
         });
         core.stop();
         webServer.stopServer();

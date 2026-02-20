@@ -30,7 +30,7 @@ public:
 
 private:
     [[ noreturn ]] void thread_proc();
-    DeviceInfo convertToDeviceInfo(const QJsonObject& devInfo);
+    DeviceInfo convertToDeviceInfo(const QJsonObject& devInfo) const;
 
     QJsonObject generateDevicesUpdate();
     QList<QJsonObject> generateData();
@@ -38,7 +38,7 @@ private:
     QFuture<void> m_threadFuture;
     QJsonArray m_devices;
 
-    bool m_dataEnabled = false;
+    std::atomic<bool> m_dataEnabled{false};
 
 };
 

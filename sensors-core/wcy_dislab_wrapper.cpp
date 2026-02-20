@@ -1,4 +1,4 @@
-#include "WCY_DisLab_Wrapper.h"
+#include "wcy_dislab_wrapper.h"
 #include "qwindowdefs_win.h"
 #include <QDebug>
 #include <QThread>

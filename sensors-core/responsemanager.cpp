@@ -7,6 +7,11 @@ ResponseManager::ResponseManager()
 
 }
 
+ResponseManager::~ResponseManager()
+{
+    qDebug() << "ResponseManager destroied";
+}
+
 int ResponseManager::send(QJsonObject respObj)
 {
     if (respObj.empty()) return 0;
@@ -25,7 +30,7 @@ int ResponseManager::send(QJsonObject respObj)
 
 //    qDebug() << "Response:" << response;
 
-    for (QWebSocket *client : m_clients) {
+    for (QWebSocket *client : std::as_const(m_clients)) {
         if (needBinary) {
             client->sendBinaryMessage(dataToSend);
         } else {
@@ -67,12 +72,17 @@ int ResponseManager::unregisterHandler(IReqHandler *handler)
     return 0;
 }
 
-void ResponseManager::clear()
-{
-    for (QWebSocket *client : m_clients) {
+void ResponseManager::terminate() {
+    for (QWebSocket *client : std::as_const(m_clients)) {
         client->abort();
+    }
+}
+void ResponseManager::clear() {
+    terminate();
+    for (QWebSocket *client : std::as_const(m_clients)) {
+        client->deleteLater();
     }
 
     m_clients.clear();
+    qDebug() << "response manager is cleared";
 }
-

@@ -82,7 +82,17 @@ SocketServer::SocketServer(quint16 port, QObject *parent) :
 
 SocketServer::~SocketServer()
 {
-    stop();
+
+    delete m_socketServer;
+    if (m_request) {
+        m_request->deleteLater();
+    }
+    if (m_response) {
+        m_response->clear();
+        m_response->deleteLater();
+    }
+
+    qDebug() << "Socket server destroied";
 }
 
 void SocketServer::start()
@@ -109,7 +119,10 @@ void SocketServer::start()
 void SocketServer::stop()
 {
     m_socketServer->close();
+    m_socketServer->disconnect(); // disconnect from all subscriped signals
     m_request->stop();
+
+    qDebug() << "Socket server stopped";
 }
 
 void SocketServer::onNewConnection()

@@ -89,7 +89,7 @@ const QList<DeviceInfo> DemoDeviceService::getConnectedDeviceList()
 {
     QList<DeviceInfo> connectedDevices;
 
-    for (auto jsdInfo: m_devices) {
+    for (const auto& jsdInfo: std::as_const(m_devices)) {
         DeviceInfo dInfo = convertToDeviceInfo(jsdInfo.toObject());
         if (dInfo.connectState == CONNECT_STATE::StateConnected
             || dInfo.connectState == CONNECT_STATE::StateConnecting
@@ -104,7 +104,7 @@ const QList<DeviceInfo> DemoDeviceService::getConnectedDeviceList()
     return connectedDevices;
 }
 
-DeviceInfo DemoDeviceService::convertToDeviceInfo(const QJsonObject& sensor)
+DeviceInfo DemoDeviceService::convertToDeviceInfo(const QJsonObject& sensor) const
 {
     DeviceInfo res;
     res.deviceId = sensor["id"].toString();
@@ -214,10 +214,16 @@ void DemoDeviceService::thread_proc()
 
     while (1)
     {
-        if (!m_dataEnabled) break;
+        m_dataEnabled.load(std::memory_order_relaxed);
+        if (!m_dataEnabled) {
+
+            QThread::msleep(1000);
+            continue;
+        }
+
         QList<QJsonObject> dat_list = generateData();
 
-        for (QJsonObject dat: dat_list) {
+        for (const QJsonObject& dat: dat_list) {
             QJsonDocument doc(dat);
             qDebug() << "Generating data " << doc.toJson(QJsonDocument::Compact) << '\n';
 
@@ -226,7 +232,7 @@ void DemoDeviceService::thread_proc()
             QJsonObject ch_values =  dat["data"].toObject();
             dFlow.timestamp = ch_values["0"].toInteger();
 
-            for (auto ch_ind: ch_values.keys()) {
+            for (const auto& ch_ind: ch_values.keys()) {
                 int i = ch_ind.toInt();
                 dFlow.values[i] = ch_values[ch_ind].toDouble();
                 //          qDebug() << "[STREAM]: " << "device mac" << dFlow.deviceMac << "ch id" << chId << ", value" << value.dataValue();

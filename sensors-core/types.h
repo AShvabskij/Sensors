@@ -97,8 +97,8 @@ enum CONNECT_STATE{
     StateRemoved
 };
 
+static const int MAX_UNITS = 5;
 struct ChannelInfo {
-    static const int MAX_UNITS = 3;
 
     int id = 0;
     QString symbol = "";

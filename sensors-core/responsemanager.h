@@ -10,6 +10,7 @@ class ResponseManager : public QObject
 
 public:
     ResponseManager();
+    ~ResponseManager()  override;
 
     enum MessageFormatEnum {
         JSON = 1, CBOR = 2
@@ -25,6 +26,7 @@ public:
 
     virtual int registerHandler(IReqHandler* handler);
     virtual int unregisterHandler(IReqHandler *handler);
+    void terminate();
     virtual void clear();
 
 public slots:
@@ -32,7 +34,7 @@ public slots:
 
 private:
 
-    QQueue<QWebSocket*> m_clients;
+    QList<QWebSocket*> m_clients;
 };
 
 #endif // RESPONSEMANAGER_H

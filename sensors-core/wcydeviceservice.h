@@ -1,3 +1,4 @@
+// wcydeviceservice.h (обновленная версия)
 #ifndef WCYDEVICESERVICE_H
 #define WCYDEVICESERVICE_H
 
@@ -13,7 +14,7 @@
 #include <QCoreApplication>
 #include <QElapsedTimer>
 
-#include "wcy_dislab_wrapper.h"
+#include "iwcy_wrapper.h"
 #include "types.h"
 
 class WCYDeviceService : public IDeviceService
@@ -21,7 +22,7 @@ class WCYDeviceService : public IDeviceService
     Q_OBJECT
 
 public:
-    explicit WCYDeviceService();
+    explicit WCYDeviceService(IWCY_Wrapper* wrapper);
     virtual ~WCYDeviceService();
 
     // IDeviceService interface implementation
@@ -41,9 +42,8 @@ private:
     void startBLEScan();
     void startHIDScan();
     void processScannedDevice(const DeviceScan& deviceScan, CONNECT_TYPE connectType);
-    void connectNextDevice();
     _return_t tryDeviceConnect(DeviceInfo *device);
-    _return_t setPreferedFrequency(const DeviceScan &device, int frequency);
+    _return_t setPreferedFrequency(const DeviceScan &device, int frequency) const;
     void handleConnectionFailed(const QString& deviceMac);
     void handleConnectionTimeOut(const QString& deviceMac);
     DeviceInfo* getDeviceByMac(const QString& deviceMac);
@@ -58,16 +58,15 @@ private:
 
     // Callback handlers
     void onDeviceScanned(const DeviceScan& deviceScan);
-    void onDataReceived(const WCY_DisLab_Wrapper::RData &data);
+    void onDataReceived(const IWCY_Wrapper::RData &data);
     void onDeviceRemoved(const DeviceScan& deviceScan);
     void onErrorOccurred(const QString& errorMessage);
 
 private:
-    WCY_DisLab_Wrapper* m_wrapper;
+    IWCY_Wrapper* m_wrapper;
     QList<DeviceInfo> m_devices;
     QSet<QString> m_scannedDevices;
 
-//  QMap<QString, QTimer*> m_connectionTimers;
     QJsonArray m_channelsDescr;
     QRecursiveMutex m_devicesMutex;
     bool m_isInitialized;

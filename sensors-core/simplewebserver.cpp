@@ -74,7 +74,7 @@ void SimpleWebServer::stopServer()
         m_tcpServer = nullptr;
         m_isRunning = false;
         emit serverStopped();
-        qDebug() << "SimpleWebServer stopped";
+        qDebug() << "simple webServer is stopped";
     }
 }
 

@@ -3,16 +3,19 @@
 #include "requestmanager.h"
 #include "responsemanager.h"
 #include "streammanager.h"
+#include "wcy_wrapper_linux.h"
+#include "wcydeviceservice.h"
 
 #include <QObject>
 #include <QtWebSockets>
 #include <QtCore>
 #include <QtConcurrent/QtConcurrent>
 
+#ifdef Q_OS_WIN
 #include "wcydeviceservice.h"
-// #ifdef Q_OS_WIN
+
 // #include "wcygrpcdeviceservice.h"
-// #endif
+#endif
 
 #include "device_generator.h"
 #include "demodeviceservice.h"
@@ -26,8 +29,11 @@ Core::Core(): BaseReqHandler()
 
 Core::~Core()
 {
+    RequestManager::instance()->remove(this);
     delete m_cmdServer;
     delete m_streamServer;
+
+    qDebug() << "Core is destroied";
 }
 
 int Core::handle(const QJsonObject &request)
@@ -115,11 +121,14 @@ void Core::init()
 #ifdef Q_OS_WIN
     m_supportedSysTypes.append(SysType::DEMO);
     m_supportedSysTypes.append(SysType::WCY);
+#elif defined(Q_OS_LINUX)
+    m_supportedSysTypes.append(SysType::DEMO);
+    m_supportedSysTypes.append(SysType::WCY); // WCY поддерживается и в Linux
 #else
     m_supportedSysTypes.append(SysType::DEMO);
 #endif
 
-    RequestManager::instance()->registerHandler(this);
+    RequestManager::instance()->registerHandler(this); // todo: it's better to create a separate handler
     ResponseManager::instance()->registerHandler(this);
     StreamManager::instance()->registerHandler(this);
 
@@ -138,8 +147,12 @@ void Core::init()
     });
 
 #ifdef Q_OS_WIN
-    auto wcy = new WCYDeviceService();
-    // auto wcy = new WCYGRPCDeviceService();
+    auto wcyWrapper = new WCY_Wrapper_Win();
+    auto wcy = new WCYDeviceService(wcyWrapper);
+    registerSensorService(SysType::WCY, wcy);
+#elif defined(Q_OS_LINUX)
+    auto wcyWrapper = new WCY_Wrapper_Linux();
+    auto wcy = new WCYDeviceService(wcyWrapper);
     registerSensorService(SysType::WCY, wcy);
 #endif
 
@@ -150,7 +163,7 @@ void Core::init()
 void Core::start(SysType sysType)
 {
     QMutexLocker locker(&m_mutex);
-    qInfo() << "Send all devices Info";
+    qInfo() << "Starting" << SYS_TYPES::sysTypeToString(sysType);
 
     if (!m_services.contains(sysType)) {
         qWarning() << "Start system error: system type is not defined: " << SYS_TYPES::sysTypeToString(sysType);
@@ -160,9 +173,10 @@ void Core::start(SysType sysType)
     Q_ASSERT(_devService);
 
     _devService->init();
-    QtConcurrent::run([this]() {
-        _devService->startScan();
-    });
+    _devService->startScan();
+    // QtConcurrent::run([this]() {
+    //     _devService->startScan();
+    // });
 
 //     if (!m_scanTimer) {
 //         m_scanTimer = new QTimer(this);
@@ -209,10 +223,10 @@ void Core::stop()
     _devService->disconnect(); // disconnect from all subscriped signals
     _devService->stopAll();
 
+    m_streamServer->stop();
     // Non-blocking delay using QTimer
-    QTimer::singleShot(3000, [this]() {
+    QTimer::singleShot(1000, [this]() {
         _devService->exit();
-        qDebug() << "Device service cleanup completed";
 
         _devService->deleteLater();
         _devService = nullptr;
@@ -256,8 +270,7 @@ long Core::executeScript(const QString& script)
 #ifdef Q_OS_WIN
     // Запускаем процесс напрямую, без cmd.exe
     m_process.start(scriptPath);
-#else
-    _process.start("bash", QStringList() << scriptPath);
+    // _process.start("bash", QStringList() << scriptPath);
 #endif
 
     if (!m_process.waitForStarted(5000)) {
@@ -333,7 +346,7 @@ QJsonObject Core::convertInfoToDTO(QList<DeviceInfo> dev_list) {
             if (ch.id == 0) break;
 
             QJsonArray units;
-            for (int jj = 0; jj < ChannelInfo::MAX_UNITS; jj++) {
+            for (int jj = 0; jj < MAX_UNITS; jj++) {
                 int unitId = ch.availableUnits[jj];
                 if (unitId == 0) break;
 

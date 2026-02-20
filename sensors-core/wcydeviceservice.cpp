@@ -3,9 +3,9 @@
 #include <QDebug>
 #include <algorithm>
 
-WCYDeviceService::WCYDeviceService()
+WCYDeviceService::WCYDeviceService(IWCY_Wrapper* wrapper)
     : IDeviceService()
-    , m_wrapper(nullptr)
+    , m_wrapper(wrapper)
     , m_isInitialized(false)
     , m_isScanning(false)
     , m_currentScanType(UNKNOWN)
@@ -16,6 +16,7 @@ WCYDeviceService::WCYDeviceService()
 
 WCYDeviceService::~WCYDeviceService()
 {
+    qDebug() << "WCYDeviceService destroied";
 }
 
 void WCYDeviceService::init()
@@ -24,16 +25,14 @@ void WCYDeviceService::init()
         return;
     }
 
-    m_wrapper = new WCY_DisLab_Wrapper(this);
-
     // Connect signals from wrapper
-    connect(m_wrapper, &WCY_DisLab_Wrapper::deviceScanned,
+    connect(m_wrapper, &IWCY_Wrapper::deviceScanned,
             this, &WCYDeviceService::onDeviceScanned, Qt::DirectConnection);
-    connect(m_wrapper, &WCY_DisLab_Wrapper::dataReceived,
+    connect(m_wrapper, &IWCY_Wrapper::dataReceived,
             this, &WCYDeviceService::onDataReceived, Qt::QueuedConnection);
-    connect(m_wrapper, &WCY_DisLab_Wrapper::deviceRemoved,
+    connect(m_wrapper, &IWCY_Wrapper::deviceRemoved,
             this, &WCYDeviceService::onDeviceRemoved);
-    connect(m_wrapper, &WCY_DisLab_Wrapper::errorOccurred,
+    connect(m_wrapper, &IWCY_Wrapper::errorOccurred,
             this, &WCYDeviceService::onErrorOccurred);
 
     // Initialize SDK
@@ -76,9 +75,9 @@ void WCYDeviceService::startScan()
     }
 
     QList<DeviceInfo> devices;
-    for (const DeviceInfo& dInfo : m_devices) {
+    for (const DeviceInfo& dInfo : std::as_const(m_devices)) {
         if (dInfo.connectState == StateConnected || dInfo.connectState == StateStarted) {
-            devices.append(dInfo); // оставим подключенные устройства не тронутыми
+            devices.append(dInfo);
         }
     }
     m_devices = devices;
@@ -91,9 +90,8 @@ void WCYDeviceService::startScan()
 
     // Start with HID (USB) scan first
     m_currentScanType = USBCONNECT;
-
     startHIDScan();
-//            startBLEScan();
+
     // Start BLE scan after a delay
     QTimer::singleShot(1000, this, [this]() {
         m_currentScanType = BLECONNECT;
@@ -112,19 +110,16 @@ void WCYDeviceService::startBLEScan()
 {
     if (!m_isScanning) return;
 
-    qDebug() << "Starting BLE scan...";
-    m_wrapper->startBLEScan(5); // 5 second scan timeout
+    qInfo() << "Starting BLE scan...";
+    m_wrapper->startBLEScan(5);
 
-    // Mark BLE scan as completed after timeout
     QTimer::singleShot(5000, this, [this]() {
         m_scanStatus.bleScanCompleted = true;
-        qDebug() << "BLE scan completed";
+        qInfo() << "BLE scan completed";
 
-        // Check if both scans are done
         if (m_scanStatus.bleScanCompleted && m_scanStatus.hidScanCompleted) {
             emit scanFinished(this);
             m_isScanning = false;
-//          connectNextDevice();
         }
     });
 }
@@ -133,23 +128,16 @@ void WCYDeviceService::startHIDScan()
 {
     if (!m_isScanning) return;
 
-    qDebug() << "Starting HID scan...";
+    qInfo() << "Starting HID scan...";
     QVector<DeviceScan> hidDevices = m_wrapper->startHIDScan();
 
-    // Process found HID devices
-    for (const auto& device : hidDevices) {
+    for (const auto& device : std::as_const(hidDevices)) {
         processScannedDevice(device, USBCONNECT);
     }
 
     m_scanStatus.hidScanCompleted = true;
-    qDebug() << "HID scan completed, found" << hidDevices.size() << "devices";
+    qInfo() << "HID scan completed, found" << hidDevices.size() << "devices";
 
-    // Try to connect to found devices
-    // if (!m_devices.isEmpty()) {
-    //     connectNextDevice();
-    // }
-
-    // Check if both scans are done
     emit scanFinished(this);
     if (m_scanStatus.bleScanCompleted && m_scanStatus.hidScanCompleted) {
         m_isScanning = false;
@@ -163,11 +151,9 @@ void WCYDeviceService::processScannedDevice(const DeviceScan& deviceScan, CONNEC
     QString deviceMac = QString::fromLocal8Bit(deviceScan.macAddress);
     QString deviceName = QString::fromLocal8Bit(deviceScan.deviceName);
 
-    // Check if device already exists
     DeviceInfo* devInfo = getDeviceByName(deviceName);
 
     if (devInfo == nullptr) {
-
         qInfo() << "[INFO] Scanned a new device:" << deviceName << "MAC:" << deviceMac
                 << "Type:" << ConnectTypeToString(connectType);
 
@@ -175,16 +161,11 @@ void WCYDeviceService::processScannedDevice(const DeviceScan& deviceScan, CONNEC
         newDevice.id = m_devices.size() + 1;
         newDevice.connectState = CONNECT_STATE::StateScanned;
         m_devices.append(newDevice);
-    } else  if (devInfo->connectState == StateRemoved) {
+    } else if (devInfo->connectState == StateRemoved) {
         devInfo->connectState = CONNECT_STATE::StateScanned;
     } else {
         return;
     }
-
-
-    // QTimer::singleShot(1000, [this, deviceMac]() {
-    //     deviceConnect(deviceMac);
-    // });
 }
 
 DeviceInfo WCYDeviceService::convertToDeviceInfo(const DeviceScan& deviceScan, CONNECT_TYPE connectType)
@@ -194,24 +175,17 @@ DeviceInfo WCYDeviceService::convertToDeviceInfo(const DeviceScan& deviceScan, C
 
     QString deviceName = QString::fromLocal8Bit(deviceScan.deviceName);
 
-    // Разделяем имя устройства и идентификатор
     QString deviceType = deviceName;
     QString displaySuffix = "";
 
-    // Ищем последние 4 символа, которые являются шестнадцатеричными цифрами
     QRegularExpression regex("([0-9A-Fa-f]{4})$");
     QRegularExpressionMatch match = regex.match(deviceName);
 
     QString devID = "";
     if (match.hasMatch()) {
         QString macNumber = match.captured(1);
-        // Удаляем суффикс из имени устройства для deviceType
         deviceType = deviceName.left(deviceName.length() - macNumber.length());
-
-        // Убираем возможный пробел в конце
         deviceType = deviceType.trimmed();
-
-        // Формируем суффикс для displayType
         displaySuffix = " - " + macNumber;
         devID = macNumber;
     }
@@ -234,21 +208,19 @@ DeviceScan WCYDeviceService::convertToDeviceScan(const DeviceInfo* device) const
         return deviceScan;
     }
 
-    // Копируем имя устройства с использованием strncpy_s
     string deviceName = device->deviceName.toStdString();
-    strncpy_s(deviceScan.deviceName, sizeof(deviceScan.deviceName),
-              deviceName.c_str(), _TRUNCATE);
+    strncpy(deviceScan.deviceName, deviceName.c_str(), sizeof(deviceScan.deviceName) - 1);
+    deviceScan.deviceName[sizeof(deviceScan.deviceName) - 1] = '\0';
 
-    // Копируем MAC адрес с использованием strncpy_s
     string macAddress = device->deviceMac.toStdString();
-    strncpy_s(deviceScan.macAddress, sizeof(deviceScan.macAddress),
-              macAddress.c_str(), _TRUNCATE);
+    strncpy(deviceScan.macAddress, macAddress.c_str(), sizeof(deviceScan.macAddress) - 1);
+    deviceScan.macAddress[sizeof(deviceScan.macAddress) - 1] = '\0';
 
-    // Устанавливаем тип устройства
-    deviceScan.deviceType = (device->connectType == USBCONNECT) ? 2 : 1; // 1=BLE, 2=HID
+    deviceScan.deviceType = (device->connectType == USBCONNECT) ? 2 : 1;
 
     return deviceScan;
 }
+
 void WCYDeviceService::deviceConnect(const QString& deviceMac)
 {
     if (!m_isInitialized) {
@@ -263,14 +235,13 @@ void WCYDeviceService::deviceConnect(const QString& deviceMac)
     }
 
     if (device->connectState == StateConnected || device->connectState == StateStarted) {
-        qDebug() << "Device" << deviceMac << "is already connected";
+        qInfo() << "Device" << deviceMac << "is already connected";
         return;
     }
 
     auto ret = tryDeviceConnect(device);
     if (ret == _return_FAIL) {
         QTimer::singleShot(3000, [this, device]() {
-            // another attempt
             tryDeviceConnect(device);
         });
     }
@@ -280,19 +251,16 @@ void WCYDeviceService::deviceConnect(const QString& deviceMac)
 {
      Q_ASSERT(device);
 
-    QString deviceMac = device->deviceMac;
-    device->connectState = StateConnecting;
+     QString deviceMac = device->deviceMac;
+     device->connectState = StateConnecting;
 
-//  handleConnectionTimeOut(deviceMac);
+     DeviceScan deviceScan = convertToDeviceScan(device);
+     bool connected = m_wrapper->connectDevice(deviceScan);
 
-    // Connect using SDK
-    DeviceScan deviceScan = convertToDeviceScan(device);
-    bool connected = m_wrapper->connectDevice(deviceScan);
-
-    if (!connected) {
-        handleConnectionFailed(deviceMac);
-        return _return_FAIL;
-    }
+     if (!connected) {
+         handleConnectionFailed(deviceMac);
+         return _return_FAIL;
+     }
 
     // Update device channels from SDK
     auto ret = updateDeviceChannels(device);
@@ -301,6 +269,7 @@ void WCYDeviceService::deviceConnect(const QString& deviceMac)
         return ret;
     }
 
+    QThread::msleep(300);
     ret = setPreferedFrequency(deviceScan, 100);
     if (ret != _return_OK) {
         handleConnectionFailed(deviceMac);
@@ -320,11 +289,13 @@ void WCYDeviceService::deviceConnect(const QString& deviceMac)
     return _return_OK;
 }
 
-_return_t WCYDeviceService::setPreferedFrequency(const DeviceScan& device, int frequencyHz)
+_return_t WCYDeviceService::setPreferedFrequency(const DeviceScan& device, int frequencyHz) const
 {
     QVector<Frequency> freqList = m_wrapper->getSupportedFrequencies(device);
 
     if (freqList.isEmpty()) {
+
+        qInfo() << (QString("Get supported frequencies failed for a device: %1").arg(device.deviceName));
         return _return_FAIL;
     }
 
@@ -374,7 +345,7 @@ void WCYDeviceService::deviceDisconnect(const QString& deviceMac)
     device->connectState = StateDisconnected;
     emit updatedeviceStatus(this, *device);
 
-    qDebug() << "Device disconnected:" << deviceMac;
+    qInfo() << "Device disconnected:" << deviceMac;
 }
 
 void WCYDeviceService::deviceStartStream(const QString& deviceMac)
@@ -407,7 +378,7 @@ void WCYDeviceService::deviceStartStream(const QString& deviceMac)
     device->connectState = StateStarted;
     emit updatedeviceStatus(this, *device);
 
-    qDebug() << "Data streaming started for device:" << deviceMac;
+    qInfo() << "Data streaming started for device:" << deviceMac;
 }
 
 void WCYDeviceService::deviceStopStream(const QString& deviceMac)
@@ -418,7 +389,7 @@ void WCYDeviceService::deviceStopStream(const QString& deviceMac)
     if (!device) return;
 
     if (device->connectState != StateStarted) {
-        qDebug() << "Device not streaming:" << deviceMac;
+        qWarning() << "Device is not streaming:" << deviceMac;
         return;
     }
 
@@ -468,17 +439,6 @@ void WCYDeviceService::stopAll()
         DeviceScan deviceScan = convertToDeviceScan(&device);
         m_wrapper->stopDataCollection(deviceScan);
         m_wrapper->disconnectDevice(deviceScan);
-
-        // if (device.connectState == StateStarted) {
-        //     m_wrapper->stopDataCollection(deviceScan);
-        //     device.connectState = StateConnected;
-        // } else {
-
-        //     if (device.connectState == StateConnected || device.connectState == StateConnecting) {
-        //         m_wrapper->disconnectDevice(deviceScan);
-        //         device.connectState = StateDisconnected;
-        //     }
-        // }
     }
 
     qDebug() << "All devices stopped";
@@ -511,23 +471,6 @@ const QList<DeviceInfo> WCYDeviceService::getConnectedDeviceList()
                  });
 
     return connectedDevices;
-}
-
-void WCYDeviceService::connectNextDevice()
-{
-    QMutexLocker locker(&m_devicesMutex);
-
-    auto it = std::find_if(m_devices.begin(), m_devices.end(),
-                           [](const DeviceInfo& device) {
-                               return device.connectState == StateScanned;
-                           });
-
-    if (it != m_devices.end()) {
-        deviceConnect(it->deviceMac);
-
-        // Schedule next connection attempt
-        QTimer::singleShot(3000, this, &WCYDeviceService::connectNextDevice);
-    }
 }
 
 void WCYDeviceService::handleConnectionTimeOut(const QString& deviceMac)
@@ -615,7 +558,7 @@ _return_t WCYDeviceService::updateDeviceChannels(DeviceInfo* device)
 
     // Update device channels
     int chIndex = 0;
-    for (const auto& fetcher : fetchers) {
+    for (const auto& fetcher : std::as_const(fetchers)) {
         if (chIndex >= DeviceInfo::MAX_CHANNELS) break;
 
         if (!m_ranges.contains(fetcher.rangeId)) {
@@ -631,7 +574,7 @@ _return_t WCYDeviceService::updateDeviceChannels(DeviceInfo* device)
         // Find unit info
         auto unitIt = std::find_if(m_channelsDescr.begin(), m_channelsDescr.end(),
                                    [&fetcher](const QJsonValue& unit) {
-                                       return unit.toObject()["id"].toInt() == fetcher.rangeId;
+                                       return unit.toObject().value("id").toInt() == fetcher.rangeId;
                                    });
 
         if (unitIt != m_channelsDescr.end()) {
@@ -640,7 +583,7 @@ _return_t WCYDeviceService::updateDeviceChannels(DeviceInfo* device)
             channel.baseUnit = unitObj["baseUnit"].toInt();
 
             QJsonArray availableUnits = unitObj["availableUnits"].toArray();
-            int unitsCount = qMin(availableUnits.size(), ChannelInfo::MAX_UNITS);
+            int unitsCount = qMin(availableUnits.size(), MAX_UNITS);
 
             for (int i = 0; i < unitsCount; ++i) {
                 channel.availableUnits[i] = availableUnits[i].toInt();
@@ -654,12 +597,12 @@ _return_t WCYDeviceService::updateDeviceChannels(DeviceInfo* device)
 
 bool WCYDeviceService::loadUnitsFromJson()
 {
-    m_channelsDescr.append(QJsonObject{{"id", 1223},{"symbol", "N"},{"name", "Force"},{"koeff", 1},{"baseUnit", 13},{"availableUnits", QJsonArray{13}}});
-    m_channelsDescr.append(QJsonObject{{"id", 1403},{"symbol", "°"},{"name", "Angle"},{"koeff", 1},{"baseUnit", 14},{"availableUnits", QJsonArray{14}}});
-    m_channelsDescr.append(QJsonObject{{"id", 1323},{"symbol", "μs"},{"name", "Moment"},{"koeff", 1},{"baseUnit", 17},{"availableUnits", QJsonArray{17}}});
-    m_channelsDescr.append(QJsonObject{{"id", 1289},{"symbol", "mm"},{"name", "Distance"},{"koeff", 1},{"baseUnit", 18},{"availableUnits", QJsonArray{18}}});
-    m_channelsDescr.append(QJsonObject{{"id", 1325},{"symbol", "gA"},{"name", "Gate A"},{"koeff", 1},{"baseUnit", 19},{"availableUnits", QJsonArray{19}}});
-    m_channelsDescr.append(QJsonObject{{"id", 1327},{"symbol", "gB"},{"name", "Gate B"},{"koeff", 1},{"baseUnit", 20},{"availableUnits", QJsonArray{20}}});
+    // m_channelsDescr.append(QJsonObject{{"id", 1223},{"symbol", "N"},{"name", "Force"},{"koeff", 1},{"baseUnit", 13},{"availableUnits", QJsonArray{13}}});
+    // m_channelsDescr.append(QJsonObject{{"id", 1403},{"symbol", "°"},{"name", "Angle"},{"koeff", 1},{"baseUnit", 14},{"availableUnits", QJsonArray{14}}});
+    // m_channelsDescr.append(QJsonObject{{"id", 1323},{"symbol", "μs"},{"name", "Moment"},{"koeff", 1},{"baseUnit", 17},{"availableUnits", QJsonArray{17}}});
+    // m_channelsDescr.append(QJsonObject{{"id", 1289},{"symbol", "mm"},{"name", "Distance"},{"koeff", 1},{"baseUnit", 18},{"availableUnits", QJsonArray{18}}});
+    // m_channelsDescr.append(QJsonObject{{"id", 1325},{"symbol", "gA"},{"name", "Gate A"},{"koeff", 1},{"baseUnit", 19},{"availableUnits", QJsonArray{19}}});
+    // m_channelsDescr.append(QJsonObject{{"id", 1327},{"symbol", "gB"},{"name", "Gate B"},{"koeff", 1},{"baseUnit", 20},{"availableUnits", QJsonArray{20}}});
 
     // QString appDir = QCoreApplication::applicationDirPath();
     // QString configPath = QDir(appDir).filePath("config/units_info.json");
@@ -712,7 +655,7 @@ void WCYDeviceService::onDeviceScanned(const DeviceScan& deviceScan)
     processScannedDevice(deviceScan, BLECONNECT);
 }
 
-void WCYDeviceService::onDataReceived(const WCY_DisLab_Wrapper::RData& data)
+void WCYDeviceService::onDataReceived(const IWCY_Wrapper::RData& data)
 {
     auto device = m_ranges.value(data.rangeId, nullptr);
     if (device == nullptr) return;

@@ -11,7 +11,7 @@ class IDDE;
 class IDDE_Dispatcher;
 class DataUsbCopier;
 
-class Core: public BaseReqHandler
+class Core: public BaseReqHandler // todo: it's better to create a separate handler
 {
     Q_OBJECT
 public:
