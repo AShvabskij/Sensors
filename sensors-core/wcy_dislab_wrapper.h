@@ -7,10 +7,11 @@
 #include <QVector>
 #include <functional>
 #include "WCY_DisLab_SDK.h"
+#include "iwcy_wrapper.h"
 #include "qelapsedtimer.h"
 
 // Структуры данных (повторяем структуры из SDK)
-class WCY_DisLab_Wrapper : public QObject
+class WCY_DisLab_Wrapper : public IWCY_Wrapper
 {
     Q_OBJECT
 

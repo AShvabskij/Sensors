@@ -129,7 +129,9 @@ int main(int argc, char *argv[])
 
         QObject::connect(&core, &Core::stopCompleted, &localLoop, [&localLoop, &app]() {
             localLoop.quit();
+#ifdef Q_OS_LINUX
             app.exit(); // todo: find out later why it freezes when exiting
+#endif
         });
         core.stop();
         webServer.stopServer();

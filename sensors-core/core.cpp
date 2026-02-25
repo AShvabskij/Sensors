@@ -3,7 +3,6 @@
 #include "requestmanager.h"
 #include "responsemanager.h"
 #include "streammanager.h"
-#include "wcy_wrapper_linux.h"
 #include "wcydeviceservice.h"
 
 #include <QObject>
@@ -11,10 +10,12 @@
 #include <QtCore>
 #include <QtConcurrent/QtConcurrent>
 
-#ifdef Q_OS_WIN
-#include "wcydeviceservice.h"
+#ifdef Q_OS_UNIX
+#include "wcy_wrapper_linux.h"
+#endif
 
-// #include "wcygrpcdeviceservice.h"
+#ifdef Q_OS_WIN
+#include "wcy_dislab_wrapper.h"
 #endif
 
 #include "device_generator.h"
@@ -147,7 +148,7 @@ void Core::init()
     });
 
 #ifdef Q_OS_WIN
-    auto wcyWrapper = new WCY_Wrapper_Win();
+    IWCY_Wrapper* wcyWrapper = new WCY_DisLab_Wrapper();
     auto wcy = new WCYDeviceService(wcyWrapper);
     registerSensorService(SysType::WCY, wcy);
 #elif defined(Q_OS_LINUX)

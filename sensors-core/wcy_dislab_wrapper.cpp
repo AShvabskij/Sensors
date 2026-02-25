@@ -11,7 +11,7 @@
 WCY_DisLab_Wrapper* WCY_DisLab_Wrapper::instance = nullptr;
 
 WCY_DisLab_Wrapper::WCY_DisLab_Wrapper(QObject *parent)
-    : QObject(parent)
+    : IWCY_Wrapper(parent)
 {
     instance = this;
     Q_ASSERT(QThread::currentThread() == QCoreApplication::instance()->thread());
