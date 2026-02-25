@@ -1,7 +1,7 @@
 #ifndef WCY_DISLAB_SDK_H
 #define WCY_DISLAB_SDK_H
 
-// ¿çÆœÌšµŒ³öºê
+// 跨平台导出宏
 #ifdef _WIN32
 #define DISLAB_SDK __declspec(dllexport)
 #else
@@ -14,13 +14,13 @@ extern "C"
 #endif
 
 	/// <summary>
-	/// Éè±žÉšÃè¶ÔÏó 1.BLE 2.HID
+	/// 设备扫描对象 1.BLE 2.HID
 	/// </summary>
 	typedef struct DeviceScan
 	{
-		char deviceName[128];//Éè±žÃû³Æ
-		char macAddress[18];//macµØÖ·
-		int deviceType;//Éè±žÀàÐÍ1.BLE 2.HID
+		char deviceName[128];//设备名称
+		char macAddress[18];//mac地址
+		int deviceType;//设备类型1.BLE 2.HID
 	};
 	typedef struct ComboFetcher
 	{
@@ -49,71 +49,70 @@ extern "C"
 		int frequency;
 	};
 
-
-	//³õÊŒ»¯
+	//初始化
 	DISLAB_SDK bool Initialize();
 
-	//ÉèÖÃÉšÃè»Øµ÷
+	//设置扫描回调
 	typedef void(*DEVICE_SCAN_CALLBACK)(const DeviceScan* deviceScan);
 	DISLAB_SDK void SetDeviceScan(DEVICE_SCAN_CALLBACK scanCalllback);
 
-	//À¶ÑÀÉšÃè
+	//蓝牙扫描
 	DISLAB_SDK void BLEScan(int timeout_seconds);
 
-	//HIDÉšÃè
+	//HID扫描
 	DISLAB_SDK int HIDScan(DeviceScan** devices,int* outCount);
 
-	//ÉèÖÃÊýŸÝ»Øµ÷
+	//设置数据回调
 	typedef void(*DATA_CALLBACK)(const DataCallback* dataCallback);
 	DISLAB_SDK void SetDataCallback(DATA_CALLBACK dataCallback);
 
-	//ÉèÖÃÉè±žÒÆ³ý»Øµ÷
+	//设置设备移除回调
 	typedef void(*DEVICE_REMOVED_CALLBACK)(const DeviceScan& deviceScan);
 	DISLAB_SDK void SetDeviceRemovedCallback(DEVICE_REMOVED_CALLBACK deviceRemovedCallback);
 
-	//Á¬œÓ
+	//连接
 	DISLAB_SDK bool Connect(const DeviceScan* deviceScan);
 
-	//¶Ï¿ªÁ¬œÓ
+	//断开连接
 	DISLAB_SDK void DisConnect(const DeviceScan* deviceScan);
 
-	//¿ªÊŒ
+	//开始
 	DISLAB_SDK void Start(const DeviceScan* deviceScan);
 
-	//Í£Ö¹
+	//停止
 	DISLAB_SDK void Stop(const DeviceScan* deviceScan);
 
-	//»ñÈ¡Êä³öÖµ×éºÏ
+	//获取输出值组合
 	DISLAB_SDK int GetDataTypes(const DeviceScan* deviceScan, ComboFetcher** comboFetchers, int* outCount);
 	DISLAB_SDK void FreeDataTypes(ComboFetcher* array);
 
-	//ÉèÖÃŽ«žÐÆ÷ÓïÑÔ
+	//设置传感器语言
 	DISLAB_SDK bool SetSensorLang(const DeviceScan* deviceScan, int langeType);
 
-	//»ñÈ¡¿ÉÇÐ»»Á¿³Ì
+	//获取可切换量程
 	DISLAB_SDK int GetSwitchRanges(const DeviceScan* deviceScan, SwitchRange** ranges, int* outCount);
 	DISLAB_SDK void FreeSwitchRanges(SwitchRange* array);
 
-	//ÇÐ»»Á¿³Ì
+	//切换量程
 	DISLAB_SDK bool SetSwitchRange(const DeviceScan* deviceScan, int rangeId);
 
-	//»ñÈ¡²ÉÑùÆµÂÊ
+	//获取采样频率
 	DISLAB_SDK int GetFrequency(const DeviceScan* deviceScan);
 
-	//»ñÈ¡Éè±žÖ§³ÖµÄ²ÉÑùÆµÂÊ
+	//获取设备支持的采样频率
 	DISLAB_SDK int GetSupportFrequency(const DeviceScan* deviceScan, Frequency** frequency, int* outCount);
 	DISLAB_SDK void FreeSupportFrequency(Frequency* array);
 
-	//ÉèÖÃ²ÉÑùÆµÂÊ
+	//设置采样频率
 	DISLAB_SDK bool SetFrequency(const DeviceScan* deviceScan, int frequency);
 
-	//µ÷Áã
+	//调零
 	DISLAB_SDK bool ClearZero(const DeviceScan* deviceScan);
 
-	//ÍË³ö
+	//退出
 	DISLAB_SDK void Shutdown(const DeviceScan* deviceScan);
 
-	//ÊÍ·Å×ÊÔŽ
+	//释放资源
 	DISLAB_SDK void Dispose();
 
 
