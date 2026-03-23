@@ -1,5 +1,6 @@
 ﻿#include "QBluetoothBase.h"
 
+using namespace swr;
 QBluetoothBase::QBluetoothBase(const QBluetoothDeviceInfo &info, QObject *parent) :\
                                /*QThread*/QObject(parent),bluetoothInfo(info)
 {

@@ -1,6 +1,7 @@
 ﻿#include "QStandardBluetooth.h"
 
 static const QLatin1String serviceUuid("00001101-0000-1000-8000-00805F9B34FB");
+using namespace swr;
 
 QStandardBluetooth::QStandardBluetooth(const QBluetoothDeviceInfo &info, QObject *parent):\
                         QBluetoothBase(info,parent)

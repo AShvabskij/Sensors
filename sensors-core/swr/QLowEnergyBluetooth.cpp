@@ -1,4 +1,5 @@
 ﻿#include "QLowEnergyBluetooth.h"
+using namespace swr;
 
 //int QLowEnergyBluetooth::sCarCount = 0;
 QLowEnergyBluetooth::QLowEnergyBluetooth(const QBluetoothDeviceInfo& info, QObject* parent) : \

@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QtWebSockets>
 #include <QtCore>
+#include <SWRDeviceService.h>
 #include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_UNIX
@@ -122,6 +123,7 @@ void Core::init()
 #ifdef Q_OS_WIN
     m_supportedSysTypes.append(SysType::DEMO);
     m_supportedSysTypes.append(SysType::WCY);
+    m_supportedSysTypes.append(SysType::SWR);
 #elif defined(Q_OS_LINUX)
     m_supportedSysTypes.append(SysType::DEMO);
     m_supportedSysTypes.append(SysType::WCY); // WCY поддерживается и в Linux
@@ -151,6 +153,9 @@ void Core::init()
     IWCY_Wrapper* wcyWrapper = new WCY_DisLab_Wrapper();
     auto wcy = new WCYDeviceService(wcyWrapper);
     registerSensorService(SysType::WCY, wcy);
+    // SWR Device Service
+    auto swrService = new SWRDeviceService();
+    registerSensorService(SysType::SWR, swrService);
 #elif defined(Q_OS_LINUX)
     auto wcyWrapper = new WCY_Wrapper_Linux();
     auto wcy = new WCYDeviceService(wcyWrapper);
@@ -209,9 +214,9 @@ void Core::start(SysType sysType)
 
 void Core::stop()
 {
-    if (m_scanTimer) {
-        m_scanTimer->stop();
-    }
+    // if (m_scanTimer) {
+    //     m_scanTimer->stop();
+    // }
 
     qDebug() << "Core stopping";
 
@@ -222,7 +227,8 @@ void Core::stop()
     }
 
     _devService->disconnect(); // disconnect from all subscriped signals
-    _devService->stopAll();
+    _devService->stopScan();
+    _devService->stopAll(); // stop all open data streams
 
     m_streamServer->stop();
     // Non-blocking delay using QTimer
@@ -310,15 +316,15 @@ void Core::registerSensorService(SysType sysType, IDeviceService *service)
         auto devList = source->getConnectedDeviceList();
         auto dtoToSend = convertInfoToDTO(devList);
         this->send(dtoToSend);
-        // if (m_scanTimer) {
-        //     m_scanTimer->start();
-        // }
     });
 
     QObject::connect(service, &IDeviceService::updatedeviceStatus, [this](IDeviceService* source, const DeviceInfo& dInfo) {
         auto devList = source->getConnectedDeviceList();
         auto dtoToSend = convertInfoToDTO(devList);
         qInfo() << "[SEND]: " << "update device" << dInfo.deviceMac << "state" << dInfo.connectState;
+        qDebug().noquote() << "[SEND]: " << dtoToSend;
+
+//      qDebug().noquote() << "[SEND]: " << QJsonDocument(dtoToSend).toJson(QJsonDocument::Compact);
 
         this->send(dtoToSend);
     });
@@ -328,6 +334,8 @@ void Core::registerSensorService(SysType sysType, IDeviceService *service)
         QList<QJsonObject> data_list;
         data_list.append(dataToSend);
 
+
+        qDebug() << "[SEND]: " << dataToSend;
         emit stream(data_list);
         });
 }
@@ -354,7 +362,7 @@ QJsonObject Core::convertInfoToDTO(QList<DeviceInfo> dev_list) {
                 units << ch.availableUnits[jj];
             }
 
-            auto ch_obj = DeviceGenerator::createChannel(ch.id, ch.symbol, ch.name, ch.baseUnit, units);
+            auto ch_obj = DeviceGenerator::createChannel(ch, units);
             channels.append(ch_obj);
         }
 
@@ -381,7 +389,6 @@ QJsonObject Core::convertDataFlowToDTO(DataFlow data) {
 
     QJsonObject sensorData;
 
-    // Текущее время в формате timestamp
     qint64 timestamp = data.timestamp;
     sensorData["0"] = timestamp;
 

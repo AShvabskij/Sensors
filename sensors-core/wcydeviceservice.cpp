@@ -670,7 +670,10 @@ void WCYDeviceService::onDataReceived(const IWCY_Wrapper::RData& data)
     // }
 
     DataFlow dFlow;
-    double time_step = (1.0 / device->frequency) * 1000 * 1000;
+    double time_step = 0;
+    if (device->frequency > 0) {
+        time_step = (1.0 / device->frequency) * 1000 * 1000; // микросекунды
+    }
     dFlow.timestamp = m_lastTimestamp[data.rangeId] + static_cast<int64>(time_step);
     dFlow.deviceMac = deviceMac;
     dFlow.values[data.rangeId] = data.value;

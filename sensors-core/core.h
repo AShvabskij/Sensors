@@ -53,7 +53,7 @@ private:
 
     QProcess m_process;
 
-    IDeviceService* _devService;
+    IDeviceService* _devService = nullptr;
 
 };
 

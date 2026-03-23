@@ -145,7 +145,7 @@ void SocketServer::onNewConnection()
     QTimer::singleShot(1000, this, [this]() {
         QJsonObject jsObject = {
             {"request_id", 777}, // 777 - own messages
-            {"sys_type_id", 2},
+            {"sys_type_id", 3},
             {"cmd", QJsonObject{
                         {"name", "system_init"},
                         {"type", ""}
