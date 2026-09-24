@@ -1,8 +1,10 @@
 #ifndef DEVICE_GENERATOR_H
 #define DEVICE_GENERATOR_H
 
+#include "types.h"
 #include <QJsonObject>
 #include <QRandomGenerator>
+#include <qjsonarray.h>
 
 class DeviceGenerator {
 public:
@@ -39,6 +41,20 @@ public:
         channel["unit"] = unit;
         channel["availableUnits"] = availableUnits;
         return channel;
+    }
+
+    static QJsonObject createChannel(const ChannelInfo& ch, const QJsonArray& availableUnits) {
+        QMap<QString, QVariant> orderedMap;
+        orderedMap.insert("id", ch.id);
+        orderedMap.insert("symbol", ch.symbol);
+        orderedMap.insert("name", ch.name);
+        orderedMap.insert("unit", ch.baseUnit);
+        orderedMap.insert("decimal", ch.decimal);
+        orderedMap.insert("min", ch.minValue);
+        orderedMap.insert("max", ch.maxValue);
+        orderedMap.insert("availableUnits", availableUnits.toVariantList());
+
+        return QJsonObject::fromVariantMap(orderedMap);
     }
 
     // Генерация синусоидальных данных для датчика

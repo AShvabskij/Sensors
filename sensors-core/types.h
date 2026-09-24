@@ -50,6 +50,7 @@ enum SysType
     Default = 0,
     DEMO = 1,
     WCY = 2,
+    SWR = 3,
     SysType_Unknown
 };
 
@@ -105,6 +106,9 @@ struct ChannelInfo {
     QString name = "";
     int baseUnit = 0;
     int availableUnits[MAX_UNITS];
+    int32 decimal;            //Sensor data display decimal places
+    double minValue;          //Minimum value of sensor
+    double maxValue;          //Maximum sensor value
 
     ChannelInfo() {
         std::fill(std::begin(availableUnits), std::end(availableUnits), 0);

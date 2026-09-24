@@ -48,16 +48,16 @@ public:
     virtual void Write(unsigned char* buf,int length) = 0;
 
     //获取设备信息
-    dInfo getDeviceInfo();
+    swr::dInfo getDeviceInfo();
 
 public:
     QBluetoothDeviceInfo bluetoothInfo;
     //设备信息
-    dInfo dataLoggerInfo;
+    swr::dInfo dataLoggerInfo;
 
 signals:
-    void dataRevice(R_DATA_FLOW data);
-    void updateDeviceState(dInfo dataLoggerInfo);
+    void dataRevice(swr::R_DATA_FLOW data);
+    void updateDeviceState(swr::dInfo dataLoggerInfo);
 };
 
 #endif // QBLUETOOTHBASE_H

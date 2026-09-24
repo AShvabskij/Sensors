@@ -4,6 +4,8 @@
 #include <QBluetoothDeviceDiscoveryAgent>
 #include <QDebug>
 
+using namespace swr;
+
 QBluetoothDeviceManagement* QBluetoothDeviceManagement::bluetoothManagementObj = nullptr;
 
 QBluetoothDeviceManagement* QBluetoothDeviceManagement::getBluetoothManagement()
@@ -23,7 +25,7 @@ void QBluetoothDeviceManagement::releasetBluetoothManagement()
 
 QBluetoothDeviceManagement::QBluetoothDeviceManagement()
 {
-    qRegisterMetaType<dInfo>("dInfo");
+    qRegisterMetaType<dInfo>("swrdInfo");
     qRegisterMetaType<R_DATA_FLOW>("R_DATA_FLOW");
     InitBluetooth();
     nameFiterList.clear();
@@ -74,11 +76,11 @@ void QBluetoothDeviceManagement::deviceConnect(const QString& deviceMac)
                 //未知
                 return;
             }
-            connect(bthDevice, SIGNAL(updateDeviceState(dInfo)), this, SLOT(updatedeviceStatus_SLOT(dInfo)), Qt::QueuedConnection);
+            connect(bthDevice, SIGNAL(updateDeviceState(swrdInfo)), this, SLOT(updatedeviceStatus_SLOT(swrdInfo)), Qt::QueuedConnection);
             connect(bthDevice, SIGNAL(dataRevice(R_DATA_FLOW)), this, SIGNAL(dataRevice(R_DATA_FLOW)), Qt::QueuedConnection);
             connectDeviceList.insert(deviceMac, bthDevice);
             bthDevice->connectDevice();
-            bthDeviceInfoList.remove(deviceMac);
+//          bthDeviceInfoList.remove(deviceMac);
         }
     }
 }
@@ -86,8 +88,10 @@ void QBluetoothDeviceManagement::deviceConnect(const QString& deviceMac)
 void QBluetoothDeviceManagement::deviceDisConnect(const QString& deviceMac)
 {
     if(connectDeviceList.contains(deviceMac)) {
-//        已连接
-        connectDeviceList.find(deviceMac).value()->disConnectDevice();
+        QBluetoothBase* bthDevice = connectDeviceList.find(deviceMac).value();
+        bthDevice->disConnectDevice();
+        bthDevice->deleteLater();
+        connectDeviceList.remove(deviceMac);
     }
 }
 
@@ -103,6 +107,7 @@ void QBluetoothDeviceManagement::clearDevice()
     stopScan();
     foreach (auto i, connectDeviceList) {
         i->disConnectDevice();
+        i->deleteLater();
     }
     bthDeviceInfoList.clear();
 }
@@ -227,13 +232,13 @@ void QBluetoothDeviceManagement::pairingDisplayPinCode(const QBluetoothAddress&,
 
 void QBluetoothDeviceManagement::updatedeviceStatus_SLOT(dInfo dataLoggerInfo)
 {
-    if (dataLoggerInfo.connectState == dataLoggerStateDisconnected) {
-        if(connectDeviceList.contains(QString::fromStdString(dataLoggerInfo.deviceMac))) {
-            QBluetoothBase* bthDevice = connectDeviceList.find(QString::fromStdString(dataLoggerInfo.deviceMac)).value();
-            delete bthDevice;
-            bthDevice = nullptr;
-            connectDeviceList.remove(QString::fromStdString(dataLoggerInfo.deviceMac));
-        }
-    }
+    // if (dataLoggerInfo.connectState == dataLoggerStateDisconnected) {
+    //     if(connectDeviceList.contains(QString::fromStdString(dataLoggerInfo.deviceMac))) {
+    //         QBluetoothBase* bthDevice = connectDeviceList.find(QString::fromStdString(dataLoggerInfo.deviceMac)).value();
+    //         delete bthDevice;
+    //         bthDevice = nullptr;
+    //         connectDeviceList.remove(QString::fromStdString(dataLoggerInfo.deviceMac));
+    //     }
+    // }
     emit updatedeviceStatus(dataLoggerInfo);
 }

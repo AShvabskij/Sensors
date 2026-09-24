@@ -27,7 +27,7 @@ else()
 endif()
 
 # Обязательные компоненты Qt для всех платформ
-find_package(Qt6 REQUIRED COMPONENTS Core HttpServer WebSockets Widgets WebEngineWidgets Concurrent Network)
+find_package(Qt6 REQUIRED COMPONENTS Core HttpServer WebSockets Widgets WebEngineWidgets Concurrent Network Bluetooth)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
@@ -56,6 +56,18 @@ set(COMMON_SOURCES
     iwcy_wrapper.h
     wcydeviceservice.h
     wcydeviceservice.cpp
+    swr/deviceapihandler.h
+    swr/deviceapihandler.cpp
+    swrdeviceservice.h swrdeviceservice.cpp
+    swr/QBluetoothBase.cpp
+    swr/QBluetoothBase.h
+    swr/qbluetoothdevicemanagement.cpp
+    swr/qbluetoothdevicemanagement.h
+    swr/QLowEnergyBluetooth.cpp
+    swr/QLowEnergyBluetooth.h
+    swr/QStandardBluetooth.cpp
+    swr/QStandardBluetooth.h
+    swr/dataloggerstructinfo.h
 )
 
 # Платформозависимые исходные файлы
@@ -86,6 +98,11 @@ qt_add_qml_module(appSensors
     VERSION 1.0
     QML_FILES
         Main.qml
+)
+
+target_include_directories(appSensors PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/swr
 )
 
 # Настройки для разных платформ
@@ -223,6 +240,7 @@ target_link_libraries(appSensors
         Qt6::Widgets
         Qt6::WebEngineWidgets
         Qt6::Concurrent
+        Qt6::Bluetooth
 )
 
 # Дополнительные библиотеки для Linux

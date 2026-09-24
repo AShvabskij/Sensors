@@ -32,14 +32,14 @@ public:
     //清除设备
     void clearDevice();
     //获取已连接设备信息
-    const QVector<dInfo> getCurrentConnectDevice();
+    const QVector<swr::dInfo> getCurrentConnectDevice();
 
 protected:
     void InitBluetooth();
     static QBluetoothDeviceManagement* bluetoothManagementObj;
 signals:
-    void updatedeviceStatus(dInfo dataLoggerInfo);//设备状态更新
-    void dataRevice(R_DATA_FLOW data);//数据接收
+    void updatedeviceStatus(swr::dInfo dataLoggerInfo);//设备状态更新
+    void dataRevice(swr::R_DATA_FLOW data);//数据接收
     void scanFinished();
 public slots:
     void discoverDevice(const QBluetoothDeviceInfo& info);
@@ -51,7 +51,7 @@ public slots:
     void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
     void pairingDisplayConfirmation(const QBluetoothAddress& address, QString pin);
     void pairingDisplayPinCode(const QBluetoothAddress& address, QString pin);
-    void updatedeviceStatus_SLOT(dInfo dataLoggerInfo);
+    void updatedeviceStatus_SLOT(swr::dInfo dataLoggerInfo);
 //
 private:
     QBluetoothDeviceDiscoveryAgent* discoveryAgent;
